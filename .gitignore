@@ -1,0 +1,16 @@
+.DS_Store
+.gradle/
+build/
+out/
+target/
+*.log
+*.tmp
+*.temp
+
+.idea/
+.vscode/
+
+.env
+.env.*
+!.env.example
+
