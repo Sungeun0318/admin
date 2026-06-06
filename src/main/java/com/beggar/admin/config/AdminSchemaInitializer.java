@@ -96,6 +96,23 @@ public class AdminSchemaInitializer implements CommandLineRunner {
                     KEY idx_good_price_stores_address (address)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
                 """);
+
+        jdbcTemplate.execute("""
+                CREATE TABLE IF NOT EXISTS admin_action_logs (
+                    log_id BIGINT NOT NULL AUTO_INCREMENT,
+                    admin_username VARCHAR(50) NOT NULL,
+                    action VARCHAR(50) NOT NULL,
+                    target_type VARCHAR(50) NOT NULL,
+                    target_id VARCHAR(100) NULL,
+                    message VARCHAR(500) NULL,
+                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (log_id),
+                    KEY idx_admin_action_logs_admin (admin_username),
+                    KEY idx_admin_action_logs_action (action),
+                    KEY idx_admin_action_logs_target (target_type, target_id),
+                    KEY idx_admin_action_logs_created_at (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """);
     }
 
     private void addColumnIfMissing(String tableName, String columnName, String columnDefinition) {
