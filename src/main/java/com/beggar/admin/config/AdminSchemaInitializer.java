@@ -73,6 +73,29 @@ public class AdminSchemaInitializer implements CommandLineRunner {
                  WHERE status IS NULL
                     OR status = ''
                 """);
+
+        jdbcTemplate.execute("""
+                CREATE TABLE IF NOT EXISTS good_price_stores (
+                    id BIGINT NOT NULL AUTO_INCREMENT,
+                    store_id VARCHAR(100) NULL,
+                    name VARCHAR(150) NOT NULL,
+                    category VARCHAR(80) NULL,
+                    item_name VARCHAR(150) NULL,
+                    price INT NULL,
+                    address VARCHAR(200) NOT NULL,
+                    lat DECIMAL(10, 7) NULL,
+                    lng DECIMAL(10, 7) NULL,
+                    phone_number VARCHAR(50) NULL,
+                    source VARCHAR(50) NOT NULL DEFAULT 'ADMIN',
+                    visible TINYINT(1) NOT NULL DEFAULT 1,
+                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id),
+                    KEY idx_good_price_stores_visible (visible),
+                    KEY idx_good_price_stores_category (category),
+                    KEY idx_good_price_stores_address (address)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """);
     }
 
     private void addColumnIfMissing(String tableName, String columnName, String columnDefinition) {
