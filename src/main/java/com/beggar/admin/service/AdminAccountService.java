@@ -27,10 +27,16 @@ public class AdminAccountService {
 
     private final AdminAccountRepository adminAccountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AdminActionLogService actionLogService;
 
-    public AdminAccountService(AdminAccountRepository adminAccountRepository, PasswordEncoder passwordEncoder) {
+    public AdminAccountService(
+            AdminAccountRepository adminAccountRepository,
+            PasswordEncoder passwordEncoder,
+            AdminActionLogService actionLogService
+    ) {
         this.adminAccountRepository = adminAccountRepository;
         this.passwordEncoder = passwordEncoder;
+        this.actionLogService = actionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -78,7 +84,8 @@ public class AdminAccountService {
                 form.getRole(),
                 form.getStatus()
         );
-        adminAccountRepository.save(account);
+        AdminAccount savedAccount = adminAccountRepository.save(account);
+        actionLogService.record("CREATE", "ADMIN_ACCOUNT", savedAccount.getAdminId(), "관리자 계정을 생성했어: " + savedAccount.getUsername());
     }
 
     @Transactional
@@ -89,11 +96,14 @@ public class AdminAccountService {
         if (StringUtils.hasText(form.getPassword())) {
             account.updatePassword(passwordEncoder.encode(form.getPassword()));
         }
+        actionLogService.record("UPDATE", "ADMIN_ACCOUNT", adminId, "관리자 계정을 수정했어: " + account.getUsername());
     }
 
     @Transactional
     public void disableAccount(Long adminId) {
-        findAccount(adminId).disable();
+        AdminAccount account = findAccount(adminId);
+        account.disable();
+        actionLogService.record("DISABLE", "ADMIN_ACCOUNT", adminId, "관리자 계정을 비활성화했어: " + account.getUsername());
     }
 
     private AdminAccount findAccount(Long adminId) {

@@ -28,15 +28,18 @@ public class AdminCommentService {
     private final RoomFreeCommentRepository commentRepository;
     private final RoomFreePostRepository postRepository;
     private final UserRepository userRepository;
+    private final AdminActionLogService actionLogService;
 
     public AdminCommentService(
             RoomFreeCommentRepository commentRepository,
             RoomFreePostRepository postRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            AdminActionLogService actionLogService
     ) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.actionLogService = actionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -69,10 +72,10 @@ public class AdminCommentService {
 
     @Transactional
     public void deleteComment(Long commentId) {
-        if (!commentRepository.existsById(commentId)) {
-            throw new IllegalArgumentException("댓글을 찾을 수 없어.");
-        }
+        RoomFreeComment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없어."));
         commentRepository.deleteById(commentId);
+        actionLogService.record("DELETE", "COMMENT", commentId, "댓글을 삭제했어. 게시글 #" + comment.getPostId());
     }
 
     private CommentListItem toListItem(RoomFreeComment comment) {

@@ -41,19 +41,22 @@ public class AdminRoomService {
     private final RoomMemberRepository roomMemberRepository;
     private final RoomBudgetResultRepository budgetResultRepository;
     private final ReceiptRepository receiptRepository;
+    private final AdminActionLogService actionLogService;
 
     public AdminRoomService(
             RoomRepository roomRepository,
             UserRepository userRepository,
             RoomMemberRepository roomMemberRepository,
             RoomBudgetResultRepository budgetResultRepository,
-            ReceiptRepository receiptRepository
+            ReceiptRepository receiptRepository,
+            AdminActionLogService actionLogService
     ) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.roomMemberRepository = roomMemberRepository;
         this.budgetResultRepository = budgetResultRepository;
         this.receiptRepository = receiptRepository;
+        this.actionLogService = actionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -114,6 +117,7 @@ public class AdminRoomService {
         }
         if (!STATUS_ENDED.equals(status)) {
             room.markEnded(LocalDateTime.now());
+            actionLogService.record("END", "ROOM", roomNo, "방을 강제 종료했어: " + room.getRoomName());
         }
     }
 
@@ -124,6 +128,7 @@ public class AdminRoomService {
 
         if (!STATUS_DELETED.equals(normalizeStatus(room.getStatus()))) {
             room.markDeleted(LocalDateTime.now());
+            actionLogService.record("DELETE", "ROOM", roomNo, "방을 삭제 처리했어: " + room.getRoomName());
         }
     }
 

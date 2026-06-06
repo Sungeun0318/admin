@@ -37,17 +37,20 @@ public class AdminReceiptService {
     private final RoomRepository roomRepository;
     private final RoomMemberRepository roomMemberRepository;
     private final UserRepository userRepository;
+    private final AdminActionLogService actionLogService;
 
     public AdminReceiptService(
             ReceiptRepository receiptRepository,
             RoomRepository roomRepository,
             RoomMemberRepository roomMemberRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            AdminActionLogService actionLogService
     ) {
         this.receiptRepository = receiptRepository;
         this.roomRepository = roomRepository;
         this.roomMemberRepository = roomMemberRepository;
         this.userRepository = userRepository;
+        this.actionLogService = actionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -113,10 +116,10 @@ public class AdminReceiptService {
 
     @Transactional
     public void deleteReceipt(Long receiptId) {
-        if (!receiptRepository.existsById(receiptId)) {
-            throw new IllegalArgumentException("영수증을 찾을 수 없어.");
-        }
+        Receipt receipt = receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new IllegalArgumentException("영수증을 찾을 수 없어."));
         receiptRepository.deleteById(receiptId);
+        actionLogService.record("DELETE", "RECEIPT", receiptId, "영수증을 삭제했어. 방 #" + receipt.getRoomNo());
     }
 
     private ReceiptListItem toListItem(Receipt receipt) {

@@ -30,9 +30,14 @@ public class AdminGoodPriceStoreService {
     private static final NumberFormat MONEY_FORMATTER = NumberFormat.getNumberInstance(Locale.KOREA);
 
     private final GoodPriceStoreRepository storeRepository;
+    private final AdminActionLogService actionLogService;
 
-    public AdminGoodPriceStoreService(GoodPriceStoreRepository storeRepository) {
+    public AdminGoodPriceStoreService(
+            GoodPriceStoreRepository storeRepository,
+            AdminActionLogService actionLogService
+    ) {
         this.storeRepository = storeRepository;
+        this.actionLogService = actionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -93,7 +98,8 @@ public class AdminGoodPriceStoreService {
                 clean(form.getPhoneNumber()),
                 form.getVisible()
         );
-        storeRepository.save(store);
+        GoodPriceStore savedStore = storeRepository.save(store);
+        actionLogService.record("CREATE", "GOOD_PRICE_STORE", savedStore.getId(), "착한가격업소를 추가했어: " + savedStore.getName());
     }
 
     @Transactional
@@ -112,19 +118,21 @@ public class AdminGoodPriceStoreService {
                 clean(form.getPhoneNumber()),
                 form.getVisible()
         );
+        actionLogService.record("UPDATE", "GOOD_PRICE_STORE", id, "착한가격업소를 수정했어: " + store.getName());
     }
 
     @Transactional
     public void toggleVisible(Long id) {
-        findStore(id).toggleVisible();
+        GoodPriceStore store = findStore(id);
+        store.toggleVisible();
+        actionLogService.record("TOGGLE_VISIBLE", "GOOD_PRICE_STORE", id, "착한가격업소 노출 여부를 변경했어: " + store.getName());
     }
 
     @Transactional
     public void deleteStore(Long id) {
-        if (!storeRepository.existsById(id)) {
-            throw new IllegalArgumentException("착한가격업소를 찾을 수 없어.");
-        }
+        GoodPriceStore store = findStore(id);
         storeRepository.deleteById(id);
+        actionLogService.record("DELETE", "GOOD_PRICE_STORE", id, "착한가격업소를 삭제했어: " + store.getName());
     }
 
     private GoodPriceStore findStore(Long id) {

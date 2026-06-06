@@ -25,10 +25,16 @@ public class AdminChatService {
 
     private final RoomFreeChatRepository chatRepository;
     private final UserRepository userRepository;
+    private final AdminActionLogService actionLogService;
 
-    public AdminChatService(RoomFreeChatRepository chatRepository, UserRepository userRepository) {
+    public AdminChatService(
+            RoomFreeChatRepository chatRepository,
+            UserRepository userRepository,
+            AdminActionLogService actionLogService
+    ) {
         this.chatRepository = chatRepository;
         this.userRepository = userRepository;
+        this.actionLogService = actionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -61,10 +67,10 @@ public class AdminChatService {
 
     @Transactional
     public void deleteChat(Long chatId) {
-        if (!chatRepository.existsById(chatId)) {
-            throw new IllegalArgumentException("채팅을 찾을 수 없어.");
-        }
+        RoomFreeChat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅을 찾을 수 없어."));
         chatRepository.deleteById(chatId);
+        actionLogService.record("DELETE", "CHAT", chatId, "채팅 메시지를 삭제했어. 작성자 #" + chat.getUserNo());
     }
 
     private ChatListItem toListItem(RoomFreeChat chat) {

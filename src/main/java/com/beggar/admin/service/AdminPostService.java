@@ -30,15 +30,18 @@ public class AdminPostService {
     private final RoomFreePostRepository postRepository;
     private final RoomFreeCommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final AdminActionLogService actionLogService;
 
     public AdminPostService(
             RoomFreePostRepository postRepository,
             RoomFreeCommentRepository commentRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            AdminActionLogService actionLogService
     ) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
+        this.actionLogService = actionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -103,11 +106,11 @@ public class AdminPostService {
 
     @Transactional
     public void deletePost(Long postId) {
-        if (!postRepository.existsById(postId)) {
-            throw new IllegalArgumentException("게시글을 찾을 수 없어.");
-        }
+        RoomFreePost post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없어."));
         commentRepository.deleteByPostId(postId);
         postRepository.deleteById(postId);
+        actionLogService.record("DELETE", "POST", postId, "게시글을 삭제했어: " + post.getTitle());
     }
 
     private PostListItem toListItem(RoomFreePost post) {
