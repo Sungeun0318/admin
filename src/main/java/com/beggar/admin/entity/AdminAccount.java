@@ -51,6 +51,35 @@ public class AdminAccount {
     protected AdminAccount() {
     }
 
+    public AdminAccount(
+            String username,
+            String passwordHash,
+            String displayName,
+            Role role,
+            Status status
+    ) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.displayName = displayName;
+        this.role = role == null ? Role.VIEWER : role;
+        this.status = status == null ? Status.ACTIVE : status;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void updateProfile(String displayName, Role role, Status status) {
+        this.displayName = displayName;
+        this.role = role == null ? Role.VIEWER : role;
+        this.status = status == null ? Status.ACTIVE : status;
+    }
+
+    public void updatePassword(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void disable() {
+        this.status = Status.DISABLED;
+    }
+
     public Long getAdminId() {
         return adminId;
     }
@@ -73,5 +102,9 @@ public class AdminAccount {
 
     public Status getStatus() {
         return status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
