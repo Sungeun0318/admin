@@ -49,6 +49,7 @@ public class AdminGoodPriceStoreController {
         model.addAttribute("activeMenu", "stores");
         model.addAttribute("form", new GoodPriceStoreForm());
         model.addAttribute("mode", "create");
+        model.addAttribute("formAction", "/admin/recommendations/stores");
         return "stores/form";
     }
 
@@ -70,6 +71,7 @@ public class AdminGoodPriceStoreController {
         model.addAttribute("form", storeService.getForm(id));
         model.addAttribute("storeId", id);
         model.addAttribute("mode", "edit");
+        model.addAttribute("formAction", "/admin/recommendations/stores/" + id);
         return "stores/form";
     }
 
