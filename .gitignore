@@ -1,6 +1,7 @@
 .DS_Store
 .gradle/
 build/
+bin/
 out/
 target/
 *.log
@@ -13,4 +14,3 @@ target/
 .env
 .env.*
 !.env.example
-
