@@ -43,9 +43,3 @@ http://localhost:8081
 ```bash
 ./gradlew build
 ```
-
-통합 검증 기록:
-
-```text
-docs/STEP15_INTEGRATION_CHECK.md
-```
