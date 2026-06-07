@@ -6,7 +6,7 @@
 ## 실행
 
 ```bash
-DB_PASSWORD=로컬DB비밀번호 ADMIN_PASSWORD=관리자초기비밀번호 ./gradlew bootRun
+DB_PASSWORD=로컬DB비밀번호 ./gradlew bootRun
 ```
 
 기본 주소:
@@ -31,11 +31,10 @@ http://localhost:8081
 
 ## 검증
 
-기본 로컬 계정:
+관리자 계정:
 
 ```text
-아이디: ADMIN_USERNAME 환경변수 기본값 admin
-비밀번호: ADMIN_PASSWORD 환경변수 값
+DB의 admin_account 테이블에 등록된 계정을 사용한다.
 ```
 
 빌드:
