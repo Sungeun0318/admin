@@ -29,6 +29,9 @@ public class AdminRoomService {
 
     private static final int PAGE_SIZE = 10;
     private static final String STATUS_ALL = "ALL";
+    private static final String STATUS_INVITING = "INVITING";
+    private static final String STATUS_BUDGET_INPUT = "BUDGET_INPUT";
+    private static final String STATUS_BUDGET_DONE = "BUDGET_DONE";
     private static final String STATUS_ACTIVE = "ACTIVE";
     private static final String STATUS_ENDED = "ENDED";
     private static final String STATUS_DELETED = "DELETED";
@@ -145,13 +148,18 @@ public class AdminRoomService {
     }
 
     private String normalizeStatus(String status) {
-        if (STATUS_ACTIVE.equals(status) || STATUS_ENDED.equals(status) || STATUS_DELETED.equals(status)) {
+        if (STATUS_INVITING.equals(status)
+                || STATUS_BUDGET_INPUT.equals(status)
+                || STATUS_BUDGET_DONE.equals(status)
+                || STATUS_ACTIVE.equals(status)
+                || STATUS_ENDED.equals(status)
+                || STATUS_DELETED.equals(status)) {
             return status;
         }
         if (STATUS_ALL.equals(status)) {
             return STATUS_ALL;
         }
-        return STATUS_ACTIVE;
+        return STATUS_ALL;
     }
 
     private String ownerLabel(Long ownerUserNo) {

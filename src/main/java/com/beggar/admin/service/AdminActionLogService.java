@@ -116,8 +116,6 @@ public class AdminActionLogService {
             case "COMMENT" -> "댓글";
             case "CHAT" -> "채팅";
             case "RECEIPT" -> "영수증";
-            case "GOOD_PRICE_STORE" -> "착한가격업소";
-            case "ADMIN_ACCOUNT" -> "관리자 계정";
             default -> blankToDash(targetType);
         };
     }

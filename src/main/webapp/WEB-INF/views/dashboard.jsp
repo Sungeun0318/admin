@@ -43,14 +43,6 @@
           <p class="stat-label">전체 영수증</p>
           <p class="stat-value">${stats.totalReceipts}</p>
         </article>
-        <article class="stat-card accent-stat">
-          <p class="stat-label">최근 7일 가입</p>
-          <p class="stat-value">${stats.recentUsers}</p>
-        </article>
-        <article class="stat-card accent-stat">
-          <p class="stat-label">최근 7일 생성 방</p>
-          <p class="stat-value">${stats.recentRooms}</p>
-        </article>
       </section>
 
       <section class="dashboard-panels" aria-label="최근 운영 데이터">
@@ -133,7 +125,7 @@
       <section class="panel">
         <h2>운영 기준</h2>
         <p>
-          진행 중인 방은 status가 ACTIVE인 방이고, 종료된 방은 ENDED,
+          진행 중인 방은 초대중, 예산 입력중, 예산 확정, ACTIVE 상태인 방이고, 종료된 방은 ENDED,
           삭제된 방은 DELETED 상태로 집계해.
         </p>
       </section>

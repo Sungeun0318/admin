@@ -11,8 +11,6 @@ public class DashboardStats {
     private final long totalComments;
     private final long totalChats;
     private final long totalReceipts;
-    private final long recentUsers;
-    private final long recentRooms;
 
     public DashboardStats(
             long totalUsers,
@@ -23,9 +21,7 @@ public class DashboardStats {
             long totalPosts,
             long totalComments,
             long totalChats,
-            long totalReceipts,
-            long recentUsers,
-            long recentRooms
+            long totalReceipts
     ) {
         this.totalUsers = totalUsers;
         this.totalRooms = totalRooms;
@@ -36,8 +32,6 @@ public class DashboardStats {
         this.totalComments = totalComments;
         this.totalChats = totalChats;
         this.totalReceipts = totalReceipts;
-        this.recentUsers = recentUsers;
-        this.recentRooms = recentRooms;
     }
 
     public long getTotalUsers() {
@@ -76,11 +70,4 @@ public class DashboardStats {
         return totalReceipts;
     }
 
-    public long getRecentUsers() {
-        return recentUsers;
-    }
-
-    public long getRecentRooms() {
-        return recentRooms;
-    }
 }

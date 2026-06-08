@@ -21,6 +21,9 @@ import java.util.List;
 @Service
 public class DashboardService {
 
+    private static final List<String> IN_PROGRESS_ROOM_STATUSES =
+            List.of("INVITING", "BUDGET_INPUT", "BUDGET_DONE", "ACTIVE");
+
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
 
@@ -50,20 +53,17 @@ public class DashboardService {
     @Transactional(readOnly = true)
     public DashboardStats getStats() {
         long totalRooms = roomRepository.count();
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
 
         return new DashboardStats(
                 userRepository.count(),
                 totalRooms,
-                roomRepository.countByStatus("ACTIVE"),
+                roomRepository.countByStatusIn(IN_PROGRESS_ROOM_STATUSES),
                 roomRepository.countByStatus("ENDED"),
                 roomRepository.countByStatus("DELETED"),
                 postRepository.count(),
                 commentRepository.count(),
                 chatRepository.count(),
-                receiptRepository.count(),
-                userRepository.countByCreatedAtGreaterThanEqual(sevenDaysAgo),
-                roomRepository.countByRoomCreatedGreaterThanEqual(sevenDaysAgo)
+                receiptRepository.count()
         );
     }
 

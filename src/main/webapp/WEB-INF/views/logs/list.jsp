@@ -31,8 +31,6 @@
         <option value="COMMENT" ${targetType == 'COMMENT' ? 'selected' : ''}>댓글</option>
         <option value="CHAT" ${targetType == 'CHAT' ? 'selected' : ''}>채팅</option>
         <option value="RECEIPT" ${targetType == 'RECEIPT' ? 'selected' : ''}>영수증</option>
-        <option value="GOOD_PRICE_STORE" ${targetType == 'GOOD_PRICE_STORE' ? 'selected' : ''}>착한가격업소</option>
-        <option value="ADMIN_ACCOUNT" ${targetType == 'ADMIN_ACCOUNT' ? 'selected' : ''}>관리자 계정</option>
       </select>
       <input
         class="search-input"

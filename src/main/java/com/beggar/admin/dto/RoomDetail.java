@@ -88,6 +88,9 @@ public class RoomDetail {
 
     public String getStatusLabel() {
         return switch (status) {
+            case "INVITING" -> "초대중";
+            case "BUDGET_INPUT" -> "예산 입력중";
+            case "BUDGET_DONE" -> "예산 확정";
             case "ENDED" -> "종료";
             case "DELETED" -> "삭제";
             default -> "진행중";
@@ -115,7 +118,7 @@ public class RoomDetail {
     }
 
     public boolean isCanEnd() {
-        return "ACTIVE".equals(status);
+        return !"ENDED".equals(status) && !"DELETED".equals(status);
     }
 
     public boolean isCanDelete() {

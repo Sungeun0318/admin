@@ -10,6 +10,9 @@
     <form class="search-form" method="get" action="/admin/rooms">
       <select class="select-input" name="status">
         <option value="ALL" ${status == 'ALL' ? 'selected' : ''}>전체</option>
+        <option value="INVITING" ${status == 'INVITING' ? 'selected' : ''}>초대중</option>
+        <option value="BUDGET_INPUT" ${status == 'BUDGET_INPUT' ? 'selected' : ''}>예산 입력중</option>
+        <option value="BUDGET_DONE" ${status == 'BUDGET_DONE' ? 'selected' : ''}>예산 확정</option>
         <option value="ACTIVE" ${status == 'ACTIVE' ? 'selected' : ''}>진행중</option>
         <option value="ENDED" ${status == 'ENDED' ? 'selected' : ''}>종료</option>
         <option value="DELETED" ${status == 'DELETED' ? 'selected' : ''}>삭제</option>
@@ -80,7 +83,8 @@
   <section class="panel">
     <h2>상태 필터 안내</h2>
     <p>
-      진행중은 아직 종료되지 않은 방, 종료는 사용자가 방 종료를 누른 방,
+      초대중, 예산 입력중, 예산 확정, 진행중은 아직 종료되지 않은 방이고,
+      종료는 사용자가 방 종료를 누른 방,
       삭제는 관리자가 운영상 숨김 처리한 방이야.
     </p>
   </section>

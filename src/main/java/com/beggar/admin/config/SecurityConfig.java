@@ -17,7 +17,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/css/**", "/login").permitAll()
-                        .requestMatchers("/admin/admins/**").hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
