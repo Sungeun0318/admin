@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class AdminAccount {
 
     public enum Role {
-        SUPER_ADMIN,
+        ADMIN,
         OPERATOR,
         VIEWER
     }
