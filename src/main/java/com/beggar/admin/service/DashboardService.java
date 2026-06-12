@@ -2,9 +2,6 @@ package com.beggar.admin.service;
 
 import com.beggar.admin.dto.DashboardListItem;
 import com.beggar.admin.dto.DashboardStats;
-import com.beggar.admin.entity.Room;
-import com.beggar.admin.entity.RoomFreePost;
-import com.beggar.admin.entity.User;
 import com.beggar.admin.repository.ReceiptRepository;
 import com.beggar.admin.repository.RoomFreeChatRepository;
 import com.beggar.admin.repository.RoomFreeCommentRepository;
