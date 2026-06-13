@@ -15,10 +15,14 @@ import java.util.Map;
 @Controller
 public class AdminRoomController {
 
-    private final WebClient webClient = WebClient.create();
+    private final WebClient webClient;
 
     @Value("${api.external-server.url}")
     private String apiServerUrl;
+
+    public AdminRoomController(WebClient backendWebClient) {
+        this.webClient = backendWebClient;
+    }
 
     /**
      * 3-1. 방 목록 조회 (검색/상태필터/페이징)
@@ -37,7 +41,6 @@ public class AdminRoomController {
                 .queryParam("page", page)
                 .toUriString();
 
-        // 💡 이제 헤더 설정 없이 순수하게 GET 요청만 깔끔하게 보냅니다.
         Map response = webClient.get()
                 .uri(uri)
                 .retrieve()
@@ -106,7 +109,6 @@ public class AdminRoomController {
                 .path("/admin/rooms/" + roomNo + "/end")
                 .toUriString();
 
-        // 토큰 없이 깔끔하게 외부 서버에 상태 변경 POST 요청 전송
         webClient.post()
                 .uri(uri)
                 .retrieve()

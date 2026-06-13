@@ -1,18 +1,13 @@
 package com.beggar.admin.controller;
 
 import com.beggar.admin.dto.UserDetail;
-import com.beggar.admin.entity.User;
 import com.beggar.admin.service.AdminUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,14 +17,15 @@ import java.util.Map;
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
-    private final WebClient webClient = WebClient.create();
+    private final WebClient webClient;
 
     // 1. application.properties에서 설정한 URL 주입받기
     @Value("${api.external-server.url}")
     private String apiServerUrl;
 
-    public AdminUserController(AdminUserService adminUserService) {
+    public AdminUserController(AdminUserService adminUserService, WebClient backendWebClient) {
         this.adminUserService = adminUserService;
+        this.webClient = backendWebClient;
     }
 
     @GetMapping("/admin/users")

@@ -23,8 +23,20 @@
 
 ```bash
 cd admin
-DB_PASSWORD=로컬DB비밀번호 ./gradlew bootRun
+cp application-example.properties application-local.properties
+SPRING_CONFIG_LOCATION=optional:file:./application-local.properties \
+API_EXTERNAL_SERVER_URL=http://localhost:8080 \
+BACKEND_ADMIN_USERNAME=admin \
+BACKEND_ADMIN_PASSWORD=admin1234 \
+DB_PASSWORD=로컬DB비밀번호 \
+./gradlew bootRun
 ```
+
+`BACKEND_ADMIN_USERNAME`, `BACKEND_ADMIN_PASSWORD`는 JSP 로그인 계정이 아니라
+백엔드 `/admin/auth/login` 호출용 서비스 계정이다. 운영 환경에서는 반드시 환경 변수나 배포 설정으로 주입한다.
+
+`application-local.properties`는 git에 올리지 않는 로컬 설정 파일이다.
+필요하면 `application-example.properties`를 참고해서 로컬 파일을 만들면 된다.
 
 기본 주소:
 
@@ -77,8 +89,9 @@ admin/
 │   ├── security/
 │   └── service/
 ├── src/main/resources/
-│   ├── application.properties
 │   └── static/css/admin.css
+├── application-example.properties
+├── application-local.properties
 └── src/main/webapp/WEB-INF/views/
     ├── auth/
     ├── chats/
