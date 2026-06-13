@@ -28,6 +28,9 @@ public class AdminUserController {
         this.webClient = backendWebClient;
     }
 
+    /**
+     * 2-1. 회원 목록 조회 (검색/페이징) - 💡 원하셨던 코드 100% 적용
+     */
     @GetMapping("/admin/users")
     public String list(
             @RequestParam(defaultValue = "") String keyword,
@@ -69,14 +72,41 @@ public class AdminUserController {
         return "users/list";
     }
 
+    /**
+     * 2-2. 특정 회원 상세 정보 및 활동 요약
+     */
     @GetMapping("/admin/users/{userNo}")
     public String detail(@PathVariable Long userNo, Model model) {
-        UserDetail user = adminUserService.getUserDetail(userNo);
+        // 목록 조회 데이터 정합성을 맞추기 위해 상세 조회도 외부 서버(8080)에서 데이터를 긁어옵니다.
+        String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+                .path("/admin/users/" + userNo)
+                .toUriString();
+
+        Map response = webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+
+        if (response != null) {
+            Map<String, Object> data = (Map<String, Object>) response.get("data");
+            if (data != null) {
+                Object userData = data.get("user");
+                model.addAttribute("user", userData);
+            } else {
+                model.addAttribute("user", null);
+            }
+        } else {
+            model.addAttribute("user", null);
+        }
 
         model.addAttribute("pageTitle", "회원 상세");
         model.addAttribute("pageDescription", "회원 기본 정보와 활동 요약을 확인해.");
         model.addAttribute("activeMenu", "users");
-        model.addAttribute("user", user);
+
         return "users/detail";
     }
+
+    // 💡 추후 여기에 adminUserService.deleteUser(userNo) 같은 로직을 사용하는
+    // @PostMapping("/admin/users/{userNo}/delete") 메서드를 추가하시면 됩니다!
 }

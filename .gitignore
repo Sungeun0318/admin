@@ -16,3 +16,4 @@ target/
 !.env.example
 application-local.properties
 src/main/resources/application.properties
+src/main/resources/data.sql
