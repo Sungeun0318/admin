@@ -22,18 +22,12 @@ public class AdminUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        System.out.println("username = " + username);
         AdminAccount account = adminAccountRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("관리자를 찾을 수 없어."));
-        System.out.println("username = " + username);
         return new User(
                 account.getUsername(),
                 account.getPasswordHash(),
-                account.getStatus() == AdminAccount.Status.ACTIVE,
-                true,
-                true,
-                true,
-                List.of(new SimpleGrantedAuthority("ROLE_" + account.getRole().name()))
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
     }
 }
