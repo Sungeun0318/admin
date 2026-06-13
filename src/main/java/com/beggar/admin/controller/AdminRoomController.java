@@ -135,6 +135,6 @@ public class AdminRoomController {
                 .block();
 
         redirectAttributes.addFlashAttribute("message", "방을 삭제 처리했어.");
-        return "redirect:/admin/rooms/%d".formatted(roomNo);
+        return "redirect:/admin/rooms";
     }
 }
