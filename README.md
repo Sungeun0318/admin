@@ -1,11 +1,28 @@
 # Beggar Admin
 
-관리자 전용 Spring Boot + JSP 서비스다.
-사용자 서비스와 분리해서 8081 포트에서 실행한다.
+거지 우정 수호대 관리자용 Spring Boot + JSP 프로젝트다.
+
+## 현재 상태
+
+- 독립 관리자 앱으로 `admin/` repo에 남아있다.
+- 기본 포트는 8081이다.
+- JSP view와 관리자 전용 service/repository/controller 구조를 가진다.
+- 다만 2026-06-13 기준으로 관리자 기능을 `backend` 안으로 통합하는 작업도 진행 중이다.
+- `backend/main`에는 `controller/admin`, `service/admin`, `dto/admin`, `repository/admin` 코드가 머지되어 컴파일까지 통과했다.
+
+즉 현재는 아래 두 구조가 공존한다.
+
+| 위치 | 상태 |
+|---|---|
+| `admin/` | 독립 JSP 관리자 앱 |
+| `backend/src/main/java/com/beggar/api/*/admin` | 백엔드 통합 관리자 코드 |
+
+최종 운영 구조를 둘 중 하나로 정리해야 한다.
 
 ## 실행
 
 ```bash
+cd admin
 DB_PASSWORD=로컬DB비밀번호 ./gradlew bootRun
 ```
 
@@ -15,30 +32,72 @@ DB_PASSWORD=로컬DB비밀번호 ./gradlew bootRun
 http://localhost:8081
 ```
 
-## 구현 기능
+## 주요 기능
 
 - 관리자 로그인/로그아웃
 - 대시보드
-- 회원 조회
-- 방 조회, 상세, 종료, 삭제 처리
+- 회원 목록/상세
+- 방 목록/상세
+- 방 종료/삭제 처리
 - 커뮤니티 게시글 관리
 - 댓글 관리
 - 채팅 관리
-- 영수증 관리
-- 착한가격업소 관리
-- 관리자 계정 관리
+- 영수증 목록/상세/삭제
 - 운영 로그 조회
 
-## 검증
+## 주요 경로
 
-관리자 계정:
+| Path | 설명 |
+|---|---|
+| `/login` | 관리자 로그인 |
+| `/`, `/admin` | 대시보드 |
+| `/admin/users` | 회원 목록 |
+| `/admin/users/{userNo}` | 회원 상세 |
+| `/admin/rooms` | 방 목록 |
+| `/admin/rooms/{roomNo}` | 방 상세 |
+| `/admin/community/posts` | 게시글 목록 |
+| `/admin/community/posts/{postId}` | 게시글 상세 |
+| `/admin/community/comments` | 댓글 목록 |
+| `/admin/chats` | 채팅 목록 |
+| `/admin/receipts` | 영수증 목록 |
+| `/admin/receipts/{receiptId}` | 영수증 상세 |
+| `/admin/logs` | 운영 로그 목록 |
+| `/admin/logs/{logId}` | 운영 로그 상세 |
+
+## 구조
 
 ```text
-DB의 admin_account 테이블에 등록된 계정을 사용한다.
+admin/
+├── src/main/java/com/beggar/admin/
+│   ├── config/
+│   ├── controller/
+│   ├── dto/
+│   ├── entity/
+│   ├── repository/
+│   ├── security/
+│   └── service/
+├── src/main/resources/
+│   ├── application.properties
+│   └── static/css/admin.css
+└── src/main/webapp/WEB-INF/views/
+    ├── auth/
+    ├── chats/
+    ├── community/
+    ├── layout/
+    ├── logs/
+    ├── receipts/
+    ├── rooms/
+    └── users/
 ```
 
-빌드:
+## 검증
 
 ```bash
 ./gradlew build
 ```
+
+## 주의점
+
+- 관리자 계정은 DB의 `admin_account` 테이블 기준이다.
+- `backend` 통합 관리자 코드와 이 독립 앱의 기능이 중복된다.
+- 통합 완료 후에는 배포/운영 경로, 인증 방식, view 사용 여부를 정해야 한다.
