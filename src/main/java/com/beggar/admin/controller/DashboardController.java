@@ -1,6 +1,5 @@
 package com.beggar.admin.controller;
 
-import com.beggar.admin.service.DashboardService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,15 +11,12 @@ import java.util.Map;
 @Controller
 public class DashboardController {
 
-    // 💡 내부 통계 및 로그 사후 관리를 위해 로컬 서비스(DashboardService) 유지
-    private final DashboardService dashboardService;
     private final WebClient webClient;
 
     @Value("${api.external-server.url}")
     private String apiServerUrl;
 
-    public DashboardController(DashboardService dashboardService, WebClient backendWebClient) {
-        this.dashboardService = dashboardService;
+    public DashboardController(WebClient backendWebClient) {
         this.webClient = backendWebClient;
     }
 
@@ -37,57 +33,17 @@ public class DashboardController {
      */
     @GetMapping("/admin")
     public String dashboard(Model model) {
-
-        // 📊 1. 전체 요약 통계 (전체 유저 수, 오늘 생성된 방 수, 영수증 수 등) 외부 호출
-        String statsUri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
-                .path("/admin/dashboard/stats")
+        String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+                .path("/admin")
                 .toUriString();
 
-        Map statsResponse = webClient.get().uri(statsUri).retrieve().bodyToMono(Map.class).block();
-        if (statsResponse != null && statsResponse.get("data") != null) {
-            model.addAttribute("stats", ((Map<String, Object>) statsResponse.get("data")).get("stats"));
-        } else {
-            model.addAttribute("stats", null);
-        }
+        Map response = webClient.get().uri(uri).retrieve().bodyToMono(Map.class).block();
+        Map<String, Object> data = response == null ? null : (Map<String, Object>) response.get("data");
 
-        // 👤 2. 최근 가입 유저 리스트 외부 호출 (/admin/users 의 최신순 혹은 전용 규격)
-        String usersUri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
-                .path("/admin/users")
-                .queryParam("page", 0) // 첫 페이지에서 최신 데이터 추출 목적
-                .toUriString();
-
-        Map usersResponse = webClient.get().uri(usersUri).retrieve().bodyToMono(Map.class).block();
-        if (usersResponse != null && usersResponse.get("data") != null) {
-            model.addAttribute("recentUsers", ((Map<String, Object>) usersResponse.get("data")).get("users"));
-        } else {
-            model.addAttribute("recentUsers", null);
-        }
-
-        // 🏠 3. 최근 생성된 방 리스트 외부 호출
-        String roomsUri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
-                .path("/admin/rooms")
-                .queryParam("page", 0)
-                .toUriString();
-
-        Map roomsResponse = webClient.get().uri(roomsUri).retrieve().bodyToMono(Map.class).block();
-        if (roomsResponse != null && roomsResponse.get("data") != null) {
-            model.addAttribute("recentRooms", ((Map<String, Object>) roomsResponse.get("data")).get("rooms"));
-        } else {
-            model.addAttribute("recentRooms", null);
-        }
-
-        // 📝 4. 최근 작성된 커뮤니티 게시글 리스트 외부 호출
-        String postsUri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
-                .path("/admin/posts")
-                .queryParam("page", 0)
-                .toUriString();
-
-        Map postsResponse = webClient.get().uri(postsUri).retrieve().bodyToMono(Map.class).block();
-        if (postsResponse != null && postsResponse.get("data") != null) {
-            model.addAttribute("recentPosts", ((Map<String, Object>) postsResponse.get("data")).get("posts"));
-        } else {
-            model.addAttribute("recentPosts", null);
-        }
+        model.addAttribute("stats", data == null ? null : data.get("stats"));
+        model.addAttribute("recentUsers", data == null ? null : data.get("recentUsers"));
+        model.addAttribute("recentRooms", data == null ? null : data.get("recentRooms"));
+        model.addAttribute("recentPosts", data == null ? null : data.get("recentPosts"));
 
         // 타임리프 레이아웃 고정 메타 데이터 바인딩
         model.addAttribute("pageTitle", "대시보드");
