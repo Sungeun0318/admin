@@ -20,20 +20,17 @@ public class BackendWebClientConfig {
     }
 
     private ExchangeFilterFunction adminAuthorizationFilter(BackendAdminTokenProvider tokenProvider) {
-        return (request, next) -> {
-            ClientRequest authorizedRequest = withBearerToken(request, tokenProvider.getToken());
-
-            return next.exchange(authorizedRequest)
+        return (request, next) -> tokenProvider.getTokenMono()
+                .flatMap(token -> next.exchange(withBearerToken(request, token))
                     .flatMap(response -> {
                         if (response.statusCode().value() != 401) {
                             return Mono.just(response);
                         }
 
                         return response.releaseBody()
-                                .then(Mono.fromSupplier(tokenProvider::refresh))
-                                .flatMap(token -> next.exchange(withBearerToken(request, token)));
-                    });
-        };
+                                .then(tokenProvider.refreshMono())
+                                .flatMap(newToken -> next.exchange(withBearerToken(request, newToken)));
+                    }));
     }
 
     private ClientRequest withBearerToken(ClientRequest request, String token) {

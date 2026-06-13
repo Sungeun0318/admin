@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,6 +18,7 @@ public class BackendAdminTokenProvider {
 
     private final WebClient loginWebClient = WebClient.create();
     private final AtomicReference<String> cachedToken = new AtomicReference<>();
+    private final AtomicReference<Mono<String>> inFlightLogin = new AtomicReference<>();
 
     private final String apiServerUrl;
     private final String username;
@@ -32,58 +34,76 @@ public class BackendAdminTokenProvider {
         this.password = password;
     }
 
+    // 서블릿 컨트롤러 같은 블로킹 호출부 전용 호환 메서드다.
+    // WebClient 필터의 리액터 이벤트 루프에서는 getTokenMono()를 사용해야 한다.
     public String getToken() {
+        return getTokenMono().block();
+    }
+
+    // 서블릿 컨트롤러 같은 블로킹 호출부 전용 호환 메서드다.
+    // WebClient 필터의 리액터 이벤트 루프에서는 refreshMono()를 사용해야 한다.
+    public String refresh() {
+        return refreshMono().block();
+    }
+
+    public Mono<String> getTokenMono() {
         String token = cachedToken.get();
         if (StringUtils.hasText(token)) {
-            return token;
+            return Mono.just(token);
         }
-
-        synchronized (this) {
-            token = cachedToken.get();
-            if (StringUtils.hasText(token)) {
-                return token;
-            }
-            return loginAndCache();
-        }
+        return loginAndCacheMono();
     }
 
-    public synchronized String refresh() {
+    public Mono<String> refreshMono() {
         cachedToken.set(null);
-        return loginAndCache();
+        return loginAndCacheMono();
     }
 
-    private String loginAndCache() {
+    private Mono<String> loginAndCacheMono() {
         validateRequiredProperties();
 
         String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
                 .path("/admin/auth/login")
                 .toUriString();
 
-        try {
-            Map<String, Object> response = loginWebClient.post()
-                    .uri(uri)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(Map.of(
-                            "username", username,
-                            "password", password
-                    ))
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
-                    })
-                    .block();
-
-            String accessToken = extractAccessToken(response);
-            cachedToken.set(accessToken);
-            return accessToken;
-        } catch (WebClientResponseException e) {
-            throw new IllegalStateException(
-                    "백엔드 관리자 로그인에 실패했어. status=%s, body=%s"
-                            .formatted(e.getStatusCode(), e.getResponseBodyAsString()),
-                    e
-            );
-        } catch (RuntimeException e) {
-            throw new IllegalStateException("백엔드 관리자 로그인 중 오류가 발생했어.", e);
+        Mono<String> existingLogin = inFlightLogin.get();
+        if (existingLogin != null) {
+            return existingLogin;
         }
+
+        AtomicReference<Mono<String>> newLoginRef = new AtomicReference<>();
+        Mono<String> newLogin = loginWebClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(Map.of(
+                        "username", username,
+                        "password", password
+                ))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                })
+                .map(this::extractAccessToken)
+                .doOnNext(cachedToken::set)
+                .onErrorMap(WebClientResponseException.class, e -> new IllegalStateException(
+                        "백엔드 관리자 로그인에 실패했어. status=%s, body=%s"
+                                .formatted(e.getStatusCode(), e.getResponseBodyAsString()),
+                        e
+                ))
+                .onErrorMap(e -> !(e instanceof IllegalStateException),
+                        e -> new IllegalStateException("백엔드 관리자 로그인 중 오류가 발생했어.", e))
+                .doFinally(signalType -> inFlightLogin.compareAndSet(newLoginRef.get(), null))
+                .cache();
+        newLoginRef.set(newLogin);
+
+        if (inFlightLogin.compareAndSet(null, newLogin)) {
+            return newLogin;
+        }
+
+        Mono<String> currentLogin = inFlightLogin.get();
+        if (currentLogin != null) {
+            return currentLogin;
+        }
+        return loginAndCacheMono();
     }
 
     private String extractAccessToken(Map<String, Object> response) {
