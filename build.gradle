@@ -15,6 +15,10 @@ processResources {
 group = 'com.beggar'
 version = '0.0.1-SNAPSHOT'
 
+bootJar {
+    archiveFileName = 'admin-app.jar'
+}
+
 java {
     sourceCompatibility = '17'
 }

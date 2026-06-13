@@ -1,0 +1,41 @@
+name: Deploy Admin Web to Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - aws-admin
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build boot jar
+        run: ./gradlew clean bootJar
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ secrets.AWS_REGION }}
+          application_name: ${{ secrets.ADMIN_EB_APPLICATION_NAME }}
+          environment_name: ${{ secrets.ADMIN_EB_ENVIRONMENT_NAME }}
+          version_label: admin-${{ github.sha }}
+          deployment_package: build/libs/admin-app.jar
+          wait_for_deployment: true
+          wait_for_environment_recovery: 1800

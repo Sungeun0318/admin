@@ -109,6 +109,39 @@ admin/
 ./gradlew build
 ```
 
+## AWS Elastic Beanstalk 배포
+
+GitHub Actions는 `aws-admin` 브랜치에 push 되거나 수동 실행(`workflow_dispatch`)하면
+`build/libs/admin-app.jar`를 Elastic Beanstalk에 배포한다.
+
+GitHub repository secrets:
+
+```text
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION=ap-northeast-2
+ADMIN_EB_APPLICATION_NAME
+ADMIN_EB_ENVIRONMENT_NAME
+```
+
+Elastic Beanstalk 환경 변수:
+
+```text
+SPRING_PROFILES_ACTIVE=aws
+SERVER_PORT=5000
+DB_HOST=RDS-ENDPOINT
+DB_PORT=3306
+DB_NAME=beggar
+DB_USERNAME=...
+DB_PASSWORD=...
+API_EXTERNAL_SERVER_URL=https://백엔드주소
+BACKEND_ADMIN_USERNAME=admin
+BACKEND_ADMIN_PASSWORD=admin1234
+```
+
+`BACKEND_ADMIN_PASSWORD`는 백엔드 `admin_accounts` 테이블의 서비스 계정 비밀번호다.
+JSP 화면 로그인은 관리자 웹 DB의 `admin_account` 테이블을 사용하므로, 운영 DB에도 계정 seed가 필요하다.
+
 ## 주의점
 
 - 관리자 계정은 DB의 `admin_account` 테이블 기준이다.
