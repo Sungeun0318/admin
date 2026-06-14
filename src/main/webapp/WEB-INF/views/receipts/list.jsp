@@ -61,6 +61,7 @@
               <th>OCR</th>
               <th>금액</th>
               <th>착한가격</th>
+              <th>발행시간</th>
               <th>등록일</th>
               <th>관리</th>
             </tr>
@@ -77,6 +78,7 @@
                 <td>${receipt.ocrStatusLabel}</td>
                 <td>${receipt.amount}</td>
                 <td>${receipt.goodPriceLabel}</td>
+                <td>${receipt.receiptIssuedAt}</td>
                 <td>${receipt.createdAt}</td>
                 <td>
                   <div class="comment-actions">

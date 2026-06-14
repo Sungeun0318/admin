@@ -39,6 +39,10 @@
           <dd>${receipt.ocrStatusLabel}</dd>
         </div>
         <div>
+          <dt>발행시간</dt>
+          <dd>${receipt.receiptIssuedAt}</dd>
+        </div>
+        <div>
           <dt>등록일</dt>
           <dd>${receipt.createdAt}</dd>
         </div>
