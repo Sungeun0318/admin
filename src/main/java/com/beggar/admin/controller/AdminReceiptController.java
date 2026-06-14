@@ -1,6 +1,5 @@
 package com.beggar.admin.controller;
 
-import com.beggar.admin.service.AdminReceiptService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -20,14 +19,12 @@ import java.util.Map;
 public class AdminReceiptController {
 
     // 💡 삭제 로직 등을 안전하게 처리하기 위해 로컬 서비스를 유지합니다.
-    private final AdminReceiptService adminReceiptService;
     private final WebClient webClient;
 
     @Value("${api.external-server.url}")
     private String apiServerUrl;
 
-    public AdminReceiptController(AdminReceiptService adminReceiptService, WebClient backendWebClient) {
-        this.adminReceiptService = adminReceiptService;
+    public AdminReceiptController(WebClient backendWebClient) {
         this.webClient = backendWebClient;
     }
 
@@ -133,8 +130,16 @@ public class AdminReceiptController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
             RedirectAttributes redirectAttributes
     ) {
-        // 기존 비즈니스 로직(로컬 서비스 호출) 안전하게 유지
-        adminReceiptService.deleteReceipt(receiptId);
+        String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+                .path("/admin/receipts/delete")
+                .queryParam("receiptId", receiptId)
+                .toUriString();
+
+        webClient.post()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
 
         redirectAttributes.addFlashAttribute("message", "영수증을 삭제했어.");
         return "redirect:/admin/receipts?keyword=%s%s%s%s%s".formatted(

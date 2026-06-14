@@ -1,6 +1,5 @@
 package com.beggar.admin.controller;
 
-import com.beggar.admin.service.AdminPostService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,14 +16,12 @@ import java.util.Map;
 public class AdminPostController {
 
     // 💡 게시글 삭제 로직을 처리하기 위해 로컬 서비스를 유지합니다.
-    private final AdminPostService adminPostService;
     private final WebClient webClient;
 
     @Value("${api.external-server.url}")
     private String apiServerUrl;
 
-    public AdminPostController(AdminPostService adminPostService, WebClient backendWebClient) {
-        this.adminPostService = adminPostService;
+    public AdminPostController( WebClient backendWebClient) {
         this.webClient = backendWebClient;
     }
 
@@ -114,8 +111,15 @@ public class AdminPostController {
      */
     @PostMapping("/admin/community/posts/{postId}/delete")
     public String delete(@PathVariable Long postId, RedirectAttributes redirectAttributes) {
-        // 내부 DB 상태 제어 또는 부가 시스템 작업 로그 연동을 위해 기존 로컬 서비스 로직 보존
-        adminPostService.deletePost(postId);
+        String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+                .path("/admin/community/posts/" + postId + "/delete")
+                .toUriString();
+
+        webClient.post()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
 
         redirectAttributes.addFlashAttribute("message", "게시글을 삭제했어.");
         return "redirect:/admin/community/posts";
