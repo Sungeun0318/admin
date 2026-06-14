@@ -62,7 +62,7 @@ public class AdminActionLogService {
     @Transactional(readOnly = true)
     public AdminActionLogListItem getLog(Long logId) {
         AdminActionLog log = logRepository.findById(logId)
-                .orElseThrow(() -> new IllegalArgumentException("운영 로그를 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("운영 로그를 찾을 수 없습니다."));
         return toListItem(log);
     }
 
@@ -135,6 +135,9 @@ public class AdminActionLogService {
         if (dateTime == null) {
             return "-";
         }
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 }

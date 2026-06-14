@@ -68,9 +68,9 @@ public class AdminChatService {
     @Transactional
     public void deleteChat(Long chatId) {
         RoomFreeChat chat = chatRepository.findById(chatId)
-                .orElseThrow(() -> new IllegalArgumentException("채팅을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("채팅을 찾을 수 없습니다."));
         chatRepository.deleteById(chatId);
-        actionLogService.record("DELETE", "CHAT", chatId, "채팅 메시지를 삭제했어. 작성자 #" + chat.getUserNo());
+        actionLogService.record("DELETE", "CHAT", chatId, "채팅 메시지를 삭제했습니다. 작성자 #" + chat.getUserNo());
     }
 
     private ChatListItem toListItem(RoomFreeChat chat) {
@@ -99,6 +99,9 @@ public class AdminChatService {
         if (dateTime == null) {
             return "-";
         }
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 }

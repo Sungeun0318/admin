@@ -91,7 +91,7 @@ public class AdminReceiptService {
     @Transactional(readOnly = true)
     public ReceiptDetail getReceiptDetail(Long receiptId) {
         Receipt receipt = receiptRepository.findById(receiptId)
-                .orElseThrow(() -> new IllegalArgumentException("영수증을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("영수증을 찾을 수 없습니다."));
 
         return new ReceiptDetail(
                 receipt.getReceiptId(),
@@ -117,9 +117,9 @@ public class AdminReceiptService {
     @Transactional
     public void deleteReceipt(Long receiptId) {
         Receipt receipt = receiptRepository.findById(receiptId)
-                .orElseThrow(() -> new IllegalArgumentException("영수증을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("영수증을 찾을 수 없습니다."));
         receiptRepository.deleteById(receiptId);
-        actionLogService.record("DELETE", "RECEIPT", receiptId, "영수증을 삭제했어. 방 #" + receipt.getRoomNo());
+        actionLogService.record("DELETE", "RECEIPT", receiptId, "영수증을 삭제했습니다. 방 #" + receipt.getRoomNo());
     }
 
     private ReceiptListItem toListItem(Receipt receipt) {
@@ -213,7 +213,10 @@ public class AdminReceiptService {
         if (dateTime == null) {
             return "-";
         }
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 
     private String money(Integer value) {
