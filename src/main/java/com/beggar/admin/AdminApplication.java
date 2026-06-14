@@ -1,5 +1,6 @@
 package com.beggar.admin;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -12,9 +13,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.TimeZone;
 
 @SpringBootApplication
 public class AdminApplication {
+
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        System.out.println("====== [Success] JVM TimeZone 설정 완료: " + TimeZone.getDefault().getID() + " ======");
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(AdminApplication.class);
     }
