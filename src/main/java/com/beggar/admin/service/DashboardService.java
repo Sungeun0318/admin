@@ -101,7 +101,9 @@ public class DashboardService {
         if (dateTime == null) {
             return "-";
         }
-
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 }

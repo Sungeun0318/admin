@@ -73,9 +73,9 @@ public class AdminCommentService {
     @Transactional
     public void deleteComment(Long commentId) {
         RoomFreeComment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
         commentRepository.deleteById(commentId);
-        actionLogService.record("DELETE", "COMMENT", commentId, "댓글을 삭제했어. 게시글 #" + comment.getPostId());
+        actionLogService.record("DELETE", "COMMENT", commentId, "댓글을 삭제했습니다. 게시글 #" + comment.getPostId());
     }
 
     private CommentListItem toListItem(RoomFreeComment comment) {
@@ -115,6 +115,9 @@ public class AdminCommentService {
         if (dateTime == null) {
             return "-";
         }
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 }
