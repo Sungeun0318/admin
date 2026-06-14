@@ -70,7 +70,7 @@ public class AdminUserService {
 
         System.out.println("userNo = " + userNo);
         User user = userRepository.findById(userNo)
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
         System.out.println("user = " + user);
         return new UserDetail(
                 user.getUserNo(),
@@ -111,6 +111,9 @@ public class AdminUserService {
         if (dateTime == null) {
             return "-";
         }
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 }

@@ -88,7 +88,7 @@ public class AdminPostService {
     @Transactional(readOnly = true)
     public PostDetail getPostDetail(Long postId) {
         RoomFreePost post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         return new PostDetail(
                 post.getPostId(),
@@ -107,10 +107,10 @@ public class AdminPostService {
     @Transactional
     public void deletePost(Long postId) {
         RoomFreePost post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
         commentRepository.deleteByPostId(postId);
         postRepository.deleteById(postId);
-        actionLogService.record("DELETE", "POST", postId, "게시글을 삭제했어: " + post.getTitle());
+        actionLogService.record("DELETE", "POST", postId, "게시글을 삭제했습니다: " + post.getTitle());
     }
 
     private PostListItem toListItem(RoomFreePost post) {
@@ -157,6 +157,9 @@ public class AdminPostService {
         if (dateTime == null) {
             return "-";
         }
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 }

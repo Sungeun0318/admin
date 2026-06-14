@@ -85,7 +85,7 @@ public class AdminRoomService {
     @Transactional(readOnly = true)
     public RoomDetail getRoomDetail(Long roomNo) {
         Room room = roomRepository.findById(roomNo)
-                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
         Optional<RoomBudgetResult> budgetResult = budgetResultRepository.findByRoomNo(roomNo);
 
         return new RoomDetail(
@@ -112,15 +112,15 @@ public class AdminRoomService {
     @Transactional
     public void endRoom(Long roomNo) {
         Room room = roomRepository.findById(roomNo)
-                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
         String status = normalizeStatus(room.getStatus());
 
         if (STATUS_DELETED.equals(status)) {
-            throw new IllegalStateException("이미 삭제된 방은 종료할 수 없어.");
+            throw new IllegalStateException("이미 삭제된 방은 종료할 수 없습니다.");
         }
         if (!STATUS_ENDED.equals(status)) {
             room.markEnded(LocalDateTime.now());
-            actionLogService.record("END", "ROOM", roomNo, "방을 강제 종료했어: " + room.getRoomName());
+            actionLogService.record("END", "ROOM", roomNo, "방을 강제 종료했습니다: " + room.getRoomName());
         }
     }
 
@@ -131,7 +131,7 @@ public class AdminRoomService {
 
         if (!STATUS_DELETED.equals(normalizeStatus(room.getStatus()))) {
             room.markDeleted(LocalDateTime.now());
-            actionLogService.record("DELETE", "ROOM", roomNo, "방을 삭제 처리했어: " + room.getRoomName());
+            actionLogService.record("DELETE", "ROOM", roomNo, "방을 삭제 처리했습니다: " + room.getRoomName());
         }
     }
 
@@ -187,7 +187,10 @@ public class AdminRoomService {
         if (dateTime == null) {
             return "-";
         }
-        return dateTime.format(DATE_TIME_FORMATTER);
+        return dateTime
+                .atZone(java.time.ZoneId.of("UTC"))
+                .withZoneSameInstant(java.time.ZoneId.of("Asia/Seoul"))
+                .format(DATE_TIME_FORMATTER);
     }
 
     private String money(Integer value) {
