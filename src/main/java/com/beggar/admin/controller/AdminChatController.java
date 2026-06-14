@@ -1,6 +1,5 @@
 package com.beggar.admin.controller;
 
-import com.beggar.admin.service.AdminChatService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,14 +15,12 @@ import java.util.Map;
 public class AdminChatController {
 
     // 💡 채팅 삭제 및 사후 관리를 위해 로컬 서비스(AdminChatService) 유지
-    private final AdminChatService adminChatService;
     private final WebClient webClient;
 
     @Value("${api.external-server.url}")
     private String apiServerUrl;
 
-    public AdminChatController(AdminChatService adminChatService, WebClient backendWebClient) {
-        this.adminChatService = adminChatService;
+    public AdminChatController(WebClient backendWebClient) {
         this.webClient = backendWebClient;
     }
 
@@ -84,8 +81,16 @@ public class AdminChatController {
             @RequestParam(required = false) Long userNo,
             RedirectAttributes redirectAttributes
     ) {
-        // 기존 내부 DB 삭제 로직 및 로깅 서비스 보존
-        adminChatService.deleteChat(chatId);
+        String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+                .path("/admin/chats/delete")
+                .queryParam("chatId", chatId)
+                .toUriString();
+
+        webClient.post()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
 
         redirectAttributes.addFlashAttribute("message", "채팅 메시지를 삭제했어.");
         String userParam = userNo == null ? "" : "&userNo=" + userNo;

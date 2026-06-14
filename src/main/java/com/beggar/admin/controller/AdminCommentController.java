@@ -1,6 +1,5 @@
 package com.beggar.admin.controller;
 
-import com.beggar.admin.service.AdminCommentService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,14 +15,12 @@ import java.util.Map;
 public class AdminCommentController {
 
     // 💡 댓글 삭제 및 사후 처리를 위해 로컬 서비스(AdminCommentService) 유지
-    private final AdminCommentService adminCommentService;
     private final WebClient webClient;
 
     @Value("${api.external-server.url}")
     private String apiServerUrl;
 
-    public AdminCommentController(AdminCommentService adminCommentService, WebClient backendWebClient) {
-        this.adminCommentService = adminCommentService;
+    public AdminCommentController(WebClient backendWebClient) {
         this.webClient = backendWebClient;
     }
 
@@ -84,8 +81,16 @@ public class AdminCommentController {
             @RequestParam(required = false) Long postId,
             RedirectAttributes redirectAttributes
     ) {
-        // 기존 비즈니스 로직(로컬 로깅 및 상태 변경 등) 보존
-        adminCommentService.deleteComment(commentId);
+        String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+                .path("/admin/community/comments/delete")
+                .queryParam("commentId", commentId)
+                .toUriString();
+
+        webClient.post()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
 
         redirectAttributes.addFlashAttribute("message", "댓글을 삭제했어.");
         String postParam = postId == null ? "" : "&postId=" + postId;
