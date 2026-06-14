@@ -37,7 +37,7 @@ public class AdminPostController {
     ) {
         // 💡 외부 API 명세 규격(/admin/posts)에 맞춰 URI를 동적 생성합니다.
         String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
-                .path("/admin/posts")
+                .path("/admin/community/posts")
                 .queryParam("keyword", keyword)
                 .queryParam("tag", tag)
                 .queryParam("page", page)
@@ -79,7 +79,7 @@ public class AdminPostController {
     public String detail(@PathVariable Long postId, Model model) {
         // 💡 외부 API 명세 규격(/admin/posts/{postId})에 맞춰 URI 빌드
         String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
-                .path("/admin/posts/" + postId)
+                .path("/admin/community/posts/" + postId)
                 .toUriString();
 
         Map response = webClient.get()

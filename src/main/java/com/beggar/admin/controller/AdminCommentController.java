@@ -36,7 +36,7 @@ public class AdminCommentController {
     ) {
         // 💡 외부 API 서버(8080) 명세인 "/admin/comments" 경로로 URI 빌드
         String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
-                .path("/admin/comments")
+                .path("/admin/community/comments")
                 .queryParam("keyword", keyword)
                 .queryParam("postId", postId)
                 .queryParam("page", page)
