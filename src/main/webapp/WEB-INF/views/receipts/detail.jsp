@@ -102,7 +102,7 @@
           <div class="empty-state">등록된 이미지가 없습니다.</div>
         </c:when>
         <c:otherwise>
-          <p class="table-content">${receipt.imageUrl}</p>
+          <img src="${receipt.imageUrl}" alt="영수증 이미지" style="max-width:100%;border-radius:6px;margin-bottom:12px;">
           <div class="action-row">
             <a class="button button-primary" href="${receipt.imageUrl}" target="_blank" rel="noreferrer">이미지 열기</a>
           </div>
