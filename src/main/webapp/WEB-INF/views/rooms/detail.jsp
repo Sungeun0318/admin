@@ -105,7 +105,7 @@
     <article class="panel">
       <h2>관리 액션</h2>
       <p>
-        삭제 작업은 되돌릴 수 없습니다.
+        종료 및 삭제 작업은 되돌릴 수 없습니다.
       </p>
       <div class="action-row">
         <form
