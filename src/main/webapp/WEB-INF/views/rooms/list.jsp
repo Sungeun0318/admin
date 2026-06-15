@@ -80,12 +80,4 @@
     </c:otherwise>
   </c:choose>
 
-  <section class="panel">
-    <h2>상태 필터 안내</h2>
-    <p>
-      초대중, 예산 입력중, 예산 확정, 진행중은 아직 종료되지 않은 방이고,
-      종료는 사용자가 방 종료를 누른 방,
-      삭제는 관리자가 운영상 숨김 처리한 방이야.
-    </p>
-  </section>
 <%@ include file="../layout/footer.jsp" %>
