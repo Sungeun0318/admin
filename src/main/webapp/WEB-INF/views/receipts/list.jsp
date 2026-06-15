@@ -133,11 +133,4 @@
     </c:otherwise>
   </c:choose>
 
-  <section class="panel">
-    <h2>영수증 관리 안내</h2>
-    <p>
-      영수증 삭제는 방 지출 합계와 추천 잔여 예산 계산에 영향을 줄 수 있습니다.
-      운영상 잘못 등록된 영수증인지 확인하고 삭제해야 합니다.
-    </p>
-  </section>
 <%@ include file="../layout/footer.jsp" %>

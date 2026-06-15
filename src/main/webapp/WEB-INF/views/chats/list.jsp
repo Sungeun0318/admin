@@ -87,11 +87,4 @@
     </c:otherwise>
   </c:choose>
 
-  <section class="panel">
-    <h2>채팅 관리 안내</h2>
-    <p>
-      현재 이 화면은 room_free_chats 테이블에 저장된 커뮤니티 전체 채팅을 관리합니다.
-      WebSocket 실시간 관리는 이후 단계에서 별도로 연결하면 됩니다.
-    </p>
-  </section>
 <%@ include file="../layout/footer.jsp" %>
