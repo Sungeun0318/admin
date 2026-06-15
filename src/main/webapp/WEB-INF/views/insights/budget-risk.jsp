@@ -82,7 +82,7 @@
 
       <section class="panel">
         <div class="panel-header">
-          <h2>고위험 방 TOP 10</h2>
+          <h2>위험 방 목록</h2>
           <span class="admin-badge">위험 점수순</span>
         </div>
 
@@ -128,6 +128,28 @@
                   </c:forEach>
                 </tbody>
               </table>
+            </div>
+            <div class="pagination">
+              <c:choose>
+                <c:when test="${riskHasPrevious}">
+                  <a class="button button-ghost" href="/admin/budget-risk?page=${riskPage - 1}&size=${riskSize}">이전</a>
+                </c:when>
+                <c:otherwise>
+                  <button class="button button-ghost" disabled>이전</button>
+                </c:otherwise>
+              </c:choose>
+              <span class="pagination-current">
+                ${riskPage + 1} / ${riskTotalPages == 0 ? 1 : riskTotalPages}
+                · 총 <fmt:formatNumber value="${riskTotalItems}" pattern="#,###" />개
+              </span>
+              <c:choose>
+                <c:when test="${riskHasNext}">
+                  <a class="button button-ghost" href="/admin/budget-risk?page=${riskPage + 1}&size=${riskSize}">다음</a>
+                </c:when>
+                <c:otherwise>
+                  <button class="button button-ghost" disabled>다음</button>
+                </c:otherwise>
+              </c:choose>
             </div>
           </c:otherwise>
         </c:choose>
