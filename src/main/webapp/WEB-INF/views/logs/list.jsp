@@ -109,11 +109,4 @@
     </c:otherwise>
   </c:choose>
 
-  <section class="panel">
-    <h2>운영 로그 기준</h2>
-    <p>
-      운영 로그는 관리자 변경 액션의 감사 기록이야.
-      일반 관리자도 로그를 삭제할 수 없고, 목록과 상세 조회만 제공해.
-    </p>
-  </section>
 <%@ include file="../layout/footer.jsp" %>
