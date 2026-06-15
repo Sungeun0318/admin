@@ -6,6 +6,7 @@
   <nav class="admin-nav" aria-label="관리자 메뉴">
     <a class="${activeMenu == 'dashboard' ? 'active' : ''}" href="/admin">대시보드</a>
     <a class="${activeMenu == 'insights' ? 'active' : ''}" href="/admin/insights">통계 보기</a>
+    <a class="${activeMenu == 'budget-risk' ? 'active' : ''}" href="/admin/budget-risk">예산 위험도</a>
     <a class="${activeMenu == 'users' ? 'active' : ''}" href="/admin/users">회원 관리</a>
     <a class="${activeMenu == 'rooms' ? 'active' : ''}" href="/admin/rooms">방 관리</a>
     <a class="${activeMenu == 'posts' ? 'active' : ''}" href="/admin/community/posts">게시글 관리</a>
