@@ -115,7 +115,7 @@ public class AdminRoomController {
                 .bodyToMono(Void.class)
                 .block();
 
-        redirectAttributes.addFlashAttribute("message", "방을 종료 처리하였습니다.");
+        redirectAttributes.addFlashAttribute("message", "방 종료 처리 완료 ✅");
         return "redirect:/admin/rooms/%d".formatted(roomNo);
     }
 
