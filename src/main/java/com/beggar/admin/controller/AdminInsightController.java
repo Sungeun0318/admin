@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -47,9 +48,17 @@ public class AdminInsightController {
     }
 
     @GetMapping("/admin/budget-risk")
-    public String budgetRisk(Model model) {
+    public String budgetRisk(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model
+    ) {
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.max(1, Math.min(size, 50));
         String budgetRiskUri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
                 .path("/admin/ai/predictions/budget-risk")
+                .queryParam("page", safePage)
+                .queryParam("size", safeSize)
                 .toUriString();
 
         Map budgetRiskResponse = webClient.get()
@@ -63,6 +72,12 @@ public class AdminInsightController {
         model.addAttribute("budgetRiskModelVersion", data == null ? null : data.get("modelVersion"));
         model.addAttribute("budgetRiskSummary", data == null ? null : data.get("summary"));
         model.addAttribute("budgetRiskItems", data == null ? null : data.get("items"));
+        model.addAttribute("riskPage", data == null ? safePage : data.get("page"));
+        model.addAttribute("riskSize", data == null ? safeSize : data.get("size"));
+        model.addAttribute("riskTotalItems", data == null ? 0 : data.get("totalItems"));
+        model.addAttribute("riskTotalPages", data == null ? 0 : data.get("totalPages"));
+        model.addAttribute("riskHasPrevious", data != null && Boolean.TRUE.equals(data.get("hasPrevious")));
+        model.addAttribute("riskHasNext", data != null && Boolean.TRUE.equals(data.get("hasNext")));
         model.addAttribute("pageTitle", "예산 위험도");
         model.addAttribute("pageDescription", "AI가 예측한 예산 초과 위험 분포와 고위험 방을 확인해.");
         model.addAttribute("activeMenu", "budget-risk");
