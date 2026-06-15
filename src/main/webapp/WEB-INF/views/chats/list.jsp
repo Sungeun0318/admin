@@ -35,7 +35,7 @@
 
   <c:choose>
     <c:when test="${empty chats.content}">
-      <div class="empty-state">조건에 맞는 채팅이 없어.</div>
+      <div class="empty-state">조건에 맞는 채팅이 없습니다.</div>
     </c:when>
     <c:otherwise>
       <div class="table-wrap">
@@ -60,7 +60,7 @@
                   <form
                     method="post"
                     action="/admin/chats/delete"
-                    onsubmit="return confirm('채팅 메시지를 삭제할까? 이 작업은 되돌릴 수 없어.');"
+                    onsubmit="return confirm('채팅 메시지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');"
                   >
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                     <input type="hidden" name="chatId" value="${chat.chatId}">
@@ -90,8 +90,8 @@
   <section class="panel">
     <h2>채팅 관리 안내</h2>
     <p>
-      현재 이 화면은 room_free_chats 테이블에 저장된 커뮤니티 전체 채팅을 관리해.
-      WebSocket 실시간 관리는 이후 단계에서 별도로 연결하면 돼.
+      현재 이 화면은 room_free_chats 테이블에 저장된 커뮤니티 전체 채팅을 관리합니다.
+      WebSocket 실시간 관리는 이후 단계에서 별도로 연결하면 됩니다.
     </p>
   </section>
 <%@ include file="../layout/footer.jsp" %>

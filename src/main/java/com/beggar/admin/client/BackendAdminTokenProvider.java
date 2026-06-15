@@ -85,12 +85,12 @@ public class BackendAdminTokenProvider {
                 .map(this::extractAccessToken)
                 .doOnNext(cachedToken::set)
                 .onErrorMap(WebClientResponseException.class, e -> new IllegalStateException(
-                        "백엔드 관리자 로그인에 실패했어. status=%s, body=%s"
+                        "백엔드 관리자 로그인에 실패하였습니다. status=%s, body=%s"
                                 .formatted(e.getStatusCode(), e.getResponseBodyAsString()),
                         e
                 ))
                 .onErrorMap(e -> !(e instanceof IllegalStateException),
-                        e -> new IllegalStateException("백엔드 관리자 로그인 중 오류가 발생했어.", e))
+                        e -> new IllegalStateException("백엔드 관리자 로그인 중 오류가 발생하였습니다.", e))
                 .doFinally(signalType -> inFlightLogin.compareAndSet(newLoginRef.get(), null))
                 .cache();
         newLoginRef.set(newLogin);
@@ -108,35 +108,35 @@ public class BackendAdminTokenProvider {
 
     private String extractAccessToken(Map<String, Object> response) {
         if (response == null) {
-            throw new IllegalStateException("백엔드 관리자 로그인 응답이 비어 있어.");
+            throw new IllegalStateException("백엔드 관리자 로그인 응답이 비어 있습니다.");
         }
 
         Object success = response.get("success");
         if (Boolean.FALSE.equals(success)) {
-            throw new IllegalStateException("백엔드 관리자 로그인에 실패했어. response=%s".formatted(response));
+            throw new IllegalStateException("백엔드 관리자 로그인에 실패하였습니다. response=%s".formatted(response));
         }
 
         Object data = response.get("data");
         if (!(data instanceof Map<?, ?> dataMap)) {
-            throw new IllegalStateException("백엔드 관리자 로그인 응답에 data가 없어. response=%s".formatted(response));
+            throw new IllegalStateException("백엔드 관리자 로그인 응답에 data가 없습니다. response=%s".formatted(response));
         }
 
         Object accessToken = dataMap.get("accessToken");
         if (!(accessToken instanceof String token) || !StringUtils.hasText(token)) {
-            throw new IllegalStateException("백엔드 관리자 로그인 응답에 accessToken이 없어. response=%s".formatted(response));
+            throw new IllegalStateException("백엔드 관리자 로그인 응답에 accessToken이 없습니다. response=%s".formatted(response));
         }
         return token;
     }
 
     private void validateRequiredProperties() {
         if (!StringUtils.hasText(apiServerUrl)) {
-            throw new IllegalStateException("api.external-server.url 설정이 필요해.");
+            throw new IllegalStateException("api.external-server.url 설정이 필요합니다.");
         }
         if (!StringUtils.hasText(username)) {
-            throw new IllegalStateException("backend.admin.username 설정이 필요해.");
+            throw new IllegalStateException("backend.admin.username 설정이 필요합니다.");
         }
         if (!StringUtils.hasText(password)) {
-            throw new IllegalStateException("backend.admin.password 설정이 필요해.");
+            throw new IllegalStateException("backend.admin.password 설정이 필요합니다.");
         }
     }
 }

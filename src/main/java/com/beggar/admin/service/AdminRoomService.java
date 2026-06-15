@@ -127,7 +127,7 @@ public class AdminRoomService {
     @Transactional
     public void deleteRoom(Long roomNo) {
         Room room = roomRepository.findById(roomNo)
-                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없어."));
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
 
         if (!STATUS_DELETED.equals(normalizeStatus(room.getStatus()))) {
             room.markDeleted(LocalDateTime.now());

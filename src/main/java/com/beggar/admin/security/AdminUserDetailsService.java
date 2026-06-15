@@ -23,7 +23,7 @@ public class AdminUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         AdminAccount account = adminAccountRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("관리자를 찾을 수 없어."));
+                .orElseThrow(() -> new UsernameNotFoundException("관리자를 찾을 수 없습니다."));
         return new User(
                 account.getUsername(),
                 account.getPasswordHash(),

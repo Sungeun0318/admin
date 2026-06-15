@@ -69,7 +69,7 @@ public class AdminActionLogController {
 
         // 기존 타임리프 검색 조건 상태 유지 및 고정 메타 데이터 바인딩
         model.addAttribute("pageTitle", "운영 로그");
-        model.addAttribute("pageDescription", "관리자 변경 액션을 조회하고 감사 기록을 확인해.");
+        model.addAttribute("pageDescription", "관리자 변경 액션을 조회하고 감사 기록을 확인합니다.");
         model.addAttribute("activeMenu", "logs");
         model.addAttribute("adminUsername", adminUsername);
         model.addAttribute("action", action);
@@ -107,7 +107,7 @@ public class AdminActionLogController {
         }
 
         model.addAttribute("pageTitle", "운영 로그 상세");
-        model.addAttribute("pageDescription", "관리자 액션의 대상과 내용을 확인해.");
+        model.addAttribute("pageDescription", "관리자 액션의 대상과 내용을 확인합니다.");
         model.addAttribute("activeMenu", "logs");
 
         return "logs/detail";

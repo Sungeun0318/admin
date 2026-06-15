@@ -65,7 +65,7 @@ public class AdminUserController {
         }
 
         model.addAttribute("pageTitle", "회원 관리");
-        model.addAttribute("pageDescription", "회원 정보를 검색하고 상세 활동을 확인해.");
+        model.addAttribute("pageDescription", "회원 정보를 검색하고 상세 활동을 확인합니다.");
         model.addAttribute("activeMenu", "users");
         model.addAttribute("keyword", keyword);
 
@@ -101,7 +101,7 @@ public class AdminUserController {
         }
 
         model.addAttribute("pageTitle", "회원 상세");
-        model.addAttribute("pageDescription", "회원 기본 정보와 활동 요약을 확인해.");
+        model.addAttribute("pageDescription", "회원 기본 정보와 활동 요약을 확인합니다.");
         model.addAttribute("activeMenu", "users");
 
         return "users/detail";
