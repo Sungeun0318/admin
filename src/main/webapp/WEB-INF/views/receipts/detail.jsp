@@ -93,6 +93,14 @@
           <dd>${receipt.goodPriceStoreAddress}</dd>
         </div>
         <div>
+          <dt>매칭 점수</dt>
+          <dd>${receipt.goodPriceMatchScore}</dd>
+        </div>
+        <div>
+          <dt>매칭 사유</dt>
+          <dd>${receipt.goodPriceMatchReason}</dd>
+        </div>
+        <div>
           <dt>검증일</dt>
           <dd>${receipt.goodPriceVerifiedAt}</dd>
         </div>
