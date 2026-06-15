@@ -112,8 +112,8 @@
   </section>
 
   <section class="panel">
-    <h2>관리</h2>
-    <p>영수증 삭제는 방 지출 합계와 추천 잔여 예산 계산에 영향을 줄 수 있습니다.</p>
+    <h2>관리 액션</h2>
+    <p>삭제 작업은 되돌릴 수 없습니다.</p>
     <form
       class="action-row"
       method="post"
