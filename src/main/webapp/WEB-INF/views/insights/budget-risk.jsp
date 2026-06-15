@@ -129,7 +129,15 @@
                 </tbody>
               </table>
             </div>
-            <div class="pagination">
+            <nav class="pagination" aria-label="예산 위험도 페이지">
+              <c:choose>
+                <c:when test="${riskHasJumpPrevious}">
+                  <a class="button button-ghost" href="/admin/budget-risk?page=${riskJumpPreviousPage}&size=${riskSize}">-5</a>
+                </c:when>
+                <c:otherwise>
+                  <button class="button button-ghost" disabled>-5</button>
+                </c:otherwise>
+              </c:choose>
               <c:choose>
                 <c:when test="${riskHasPrevious}">
                   <a class="button button-ghost" href="/admin/budget-risk?page=${riskPage - 1}&size=${riskSize}">이전</a>
@@ -138,6 +146,16 @@
                   <button class="button button-ghost" disabled>이전</button>
                 </c:otherwise>
               </c:choose>
+              <c:forEach var="pageNo" items="${riskPageNumbers}">
+                <c:choose>
+                  <c:when test="${pageNo == riskPage}">
+                    <span class="button button-page-active" aria-current="page">${pageNo + 1}</span>
+                  </c:when>
+                  <c:otherwise>
+                    <a class="button button-ghost" href="/admin/budget-risk?page=${pageNo}&size=${riskSize}">${pageNo + 1}</a>
+                  </c:otherwise>
+                </c:choose>
+              </c:forEach>
               <span class="pagination-current">
                 ${riskPage + 1} / ${riskTotalPages == 0 ? 1 : riskTotalPages}
                 · 총 <fmt:formatNumber value="${riskTotalItems}" pattern="#,###" />개
@@ -150,7 +168,15 @@
                   <button class="button button-ghost" disabled>다음</button>
                 </c:otherwise>
               </c:choose>
-            </div>
+              <c:choose>
+                <c:when test="${riskHasJumpNext}">
+                  <a class="button button-ghost" href="/admin/budget-risk?page=${riskJumpNextPage}&size=${riskSize}">+5</a>
+                </c:when>
+                <c:otherwise>
+                  <button class="button button-ghost" disabled>+5</button>
+                </c:otherwise>
+              </c:choose>
+            </nav>
           </c:otherwise>
         </c:choose>
       </section>
