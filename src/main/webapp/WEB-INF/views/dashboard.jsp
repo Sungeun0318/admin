@@ -122,11 +122,4 @@
         </article>
       </section>
 
-      <section class="panel">
-        <h2>운영 기준</h2>
-        <p>
-          진행 중인 방은 초대중, 예산 입력중, 예산 확정, ACTIVE 상태인 방이고, 종료된 방은 ENDED,
-          삭제된 방은 DELETED 상태로 집계합니다.
-        </p>
-      </section>
 <%@ include file="layout/footer.jsp" %>
