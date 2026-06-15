@@ -99,7 +99,7 @@
       <h2>이미지</h2>
       <c:choose>
         <c:when test="${receipt.imageUrl == '-'}">
-          <div class="empty-state">등록된 이미지가 없어.</div>
+          <div class="empty-state">등록된 이미지가 없습니다.</div>
         </c:when>
         <c:otherwise>
           <p class="table-content">${receipt.imageUrl}</p>
@@ -113,12 +113,12 @@
 
   <section class="panel">
     <h2>관리</h2>
-    <p>영수증 삭제는 방 지출 합계와 추천 잔여 예산 계산에 영향을 줄 수 있어.</p>
+    <p>영수증 삭제는 방 지출 합계와 추천 잔여 예산 계산에 영향을 줄 수 있습니다.</p>
     <form
       class="action-row"
       method="post"
       action="/admin/receipts/delete"
-      onsubmit="return confirm('영수증을 삭제할까? 이 작업은 되돌릴 수 없어.');"
+      onsubmit="return confirm('영수증을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');"
     >
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
       <input type="hidden" name="receiptId" value="${receipt.receiptId}">

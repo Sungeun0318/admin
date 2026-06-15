@@ -54,7 +54,7 @@
           <div class="mini-list">
             <c:choose>
               <c:when test="${empty recentUsers}">
-                <div class="mini-empty">최근 가입 회원이 없어.</div>
+                <div class="mini-empty">최근 가입 회원이 없습니다.</div>
               </c:when>
               <c:otherwise>
                 <c:forEach var="item" items="${recentUsers}">
@@ -79,7 +79,7 @@
           <div class="mini-list">
             <c:choose>
               <c:when test="${empty recentRooms}">
-                <div class="mini-empty">최근 생성 방이 없어.</div>
+                <div class="mini-empty">최근 생성 방이 없습니다.</div>
               </c:when>
               <c:otherwise>
                 <c:forEach var="item" items="${recentRooms}">
@@ -104,7 +104,7 @@
           <div class="mini-list">
             <c:choose>
               <c:when test="${empty recentPosts}">
-                <div class="mini-empty">최근 게시글이 없어.</div>
+                <div class="mini-empty">최근 게시글이 없습니다.</div>
               </c:when>
               <c:otherwise>
                 <c:forEach var="item" items="${recentPosts}">
@@ -126,7 +126,7 @@
         <h2>운영 기준</h2>
         <p>
           진행 중인 방은 초대중, 예산 입력중, 예산 확정, ACTIVE 상태인 방이고, 종료된 방은 ENDED,
-          삭제된 방은 DELETED 상태로 집계해.
+          삭제된 방은 DELETED 상태로 집계합니다.
         </p>
       </section>
 <%@ include file="layout/footer.jsp" %>

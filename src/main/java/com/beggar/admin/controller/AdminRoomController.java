@@ -59,7 +59,7 @@ public class AdminRoomController {
         }
 
         model.addAttribute("pageTitle", "방 관리");
-        model.addAttribute("pageDescription", "방 정보를 검색하고 상세 운영 데이터를 확인해.");
+        model.addAttribute("pageDescription", "방 정보를 검색하고 상세 운영 데이터를 확인합니다.");
         model.addAttribute("activeMenu", "rooms");
         model.addAttribute("keyword", keyword);
         model.addAttribute("status", status);
@@ -94,7 +94,7 @@ public class AdminRoomController {
         }
 
         model.addAttribute("pageTitle", "방 상세");
-        model.addAttribute("pageDescription", "방 기본 정보와 예산/참여/영수증 요약을 확인해.");
+        model.addAttribute("pageDescription", "방 기본 정보와 예산/참여/영수증 요약을 확인합니다.");
         model.addAttribute("activeMenu", "rooms");
 
         return "rooms/detail";
@@ -115,7 +115,7 @@ public class AdminRoomController {
                 .bodyToMono(Void.class)
                 .block();
 
-        redirectAttributes.addFlashAttribute("message", "방을 종료 처리했어.");
+        redirectAttributes.addFlashAttribute("message", "방을 종료 처리하였습니다.");
         return "redirect:/admin/rooms/%d".formatted(roomNo);
     }
 
@@ -134,7 +134,7 @@ public class AdminRoomController {
                 .bodyToMono(Void.class)
                 .block();
 
-        redirectAttributes.addFlashAttribute("message", "방을 삭제 처리했어.");
+        redirectAttributes.addFlashAttribute("message", "방 삭제 완료 ✅");
         return "redirect:/admin/rooms";
     }
 }
