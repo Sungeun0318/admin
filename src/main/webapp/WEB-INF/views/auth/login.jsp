@@ -12,14 +12,14 @@
     <section class="login-card">
       <h1 class="login-title">관리자 로그인</h1>
       <p class="login-description">
-        Beggar 관리자 콘솔에 접근하려면 관리자 계정으로 로그인해야 해.
+        Beggar 관리자 콘솔에 접근하려면 관리자 계정으로 로그인해야 합니다.
       </p>
 
       <% if (request.getParameter("error") != null) { %>
-        <div class="alert alert-danger">아이디나 비밀번호를 확인해줘.</div>
+        <div class="alert alert-danger">아이디나 비밀번호를 확인해 주십시오.</div>
       <% } %>
       <% if (request.getParameter("logout") != null) { %>
-        <div class="alert alert-success">로그아웃됐어.</div>
+        <div class="alert alert-success">로그아웃되었습니다.</div>
       <% } %>
 
       <form method="post" action="/login">

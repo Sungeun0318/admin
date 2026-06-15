@@ -47,7 +47,7 @@ public class DashboardController {
 
         // 타임리프 레이아웃 고정 메타 데이터 바인딩
         model.addAttribute("pageTitle", "대시보드");
-        model.addAttribute("pageDescription", "서비스 운영 지표를 한눈에 확인해.");
+        model.addAttribute("pageDescription", "서비스 운영 지표를 한눈에 확인합니다.");
         model.addAttribute("activeMenu", "dashboard");
 
         return "dashboard";

@@ -35,7 +35,7 @@
 
   <c:choose>
     <c:when test="${empty comments.content}">
-      <div class="empty-state">조건에 맞는 댓글이 없어.</div>
+      <div class="empty-state">조건에 맞는 댓글이 없습니다.</div>
     </c:when>
     <c:otherwise>
       <div class="table-wrap">
@@ -66,7 +66,7 @@
                   <form
                     method="post"
                     action="/admin/community/comments/delete"
-                    onsubmit="return confirm('댓글을 삭제할까? 이 작업은 되돌릴 수 없어.');"
+                    onsubmit="return confirm('댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');"
                   >
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                     <input type="hidden" name="commentId" value="${comment.commentId}">

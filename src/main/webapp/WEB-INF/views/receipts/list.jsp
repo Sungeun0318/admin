@@ -45,7 +45,7 @@
 
   <c:choose>
     <c:when test="${empty receipts.content}">
-      <div class="empty-state">조건에 맞는 영수증이 없어.</div>
+      <div class="empty-state">조건에 맞는 영수증이 없습니다.</div>
     </c:when>
     <c:otherwise>
       <div class="table-wrap">
@@ -86,7 +86,7 @@
                     <form
                       method="post"
                       action="/admin/receipts/delete"
-                      onsubmit="return confirm('영수증을 삭제할까? 방 지출 합계에 영향이 있을 수 있어.');"
+                      onsubmit="return confirm('영수증을 삭제하시겠습니까? 방 지출 합계에 영향이 있을 수 있습니다.');"
                     >
                       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                       <input type="hidden" name="receiptId" value="${receipt.receiptId}">
@@ -136,8 +136,8 @@
   <section class="panel">
     <h2>영수증 관리 안내</h2>
     <p>
-      영수증 삭제는 방 지출 합계와 추천 잔여 예산 계산에 영향을 줄 수 있어.
-      운영상 잘못 등록된 영수증인지 확인하고 삭제해야 해.
+      영수증 삭제는 방 지출 합계와 추천 잔여 예산 계산에 영향을 줄 수 있습니다.
+      운영상 잘못 등록된 영수증인지 확인하고 삭제해야 합니다.
     </p>
   </section>
 <%@ include file="../layout/footer.jsp" %>

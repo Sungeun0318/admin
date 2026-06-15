@@ -63,7 +63,7 @@ public class AdminChatController {
 
         // 타임리프 화면 데이터 및 조건 유지
         model.addAttribute("pageTitle", "채팅 관리");
-        model.addAttribute("pageDescription", "커뮤니티 전체 채팅 메시지를 검색하고 삭제할 수 있어.");
+        model.addAttribute("pageDescription", "커뮤니티 전체 채팅 메시지를 검색하고 삭제할 수 있습니다.");
         model.addAttribute("activeMenu", "chats");
         model.addAttribute("keyword", keyword);
         model.addAttribute("userNo", userNo);
@@ -92,7 +92,7 @@ public class AdminChatController {
                 .bodyToMono(Void.class)
                 .block();
 
-        redirectAttributes.addFlashAttribute("message", "채팅 메시지를 삭제했어.");
+        redirectAttributes.addFlashAttribute("message", "채팅 메시지 삭제 완료 ✅");
         String userParam = userNo == null ? "" : "&userNo=" + userNo;
         return "redirect:/admin/chats?keyword=" + keyword + userParam;
     }

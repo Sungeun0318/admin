@@ -23,7 +23,7 @@
 
   <c:choose>
     <c:when test="${empty users.content}">
-      <div class="empty-state">검색 결과가 없어.</div>
+      <div class="empty-state">검색 결과가 없습니다.</div>
     </c:when>
     <c:otherwise>
       <div class="table-wrap">

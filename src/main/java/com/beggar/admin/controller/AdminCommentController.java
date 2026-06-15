@@ -63,7 +63,7 @@ public class AdminCommentController {
 
         // 타임리프 전용 렌더링 속성 및 파라미터 백업 유지
         model.addAttribute("pageTitle", "댓글 관리");
-        model.addAttribute("pageDescription", "커뮤니티 댓글을 검색하고 삭제할 수 있어.");
+        model.addAttribute("pageDescription", "커뮤니티 댓글을 검색하고 삭제할 수 있습니다.");
         model.addAttribute("activeMenu", "comments");
         model.addAttribute("keyword", keyword);
         model.addAttribute("postId", postId);
@@ -92,7 +92,7 @@ public class AdminCommentController {
                 .bodyToMono(Void.class)
                 .block();
 
-        redirectAttributes.addFlashAttribute("message", "댓글을 삭제했어.");
+        redirectAttributes.addFlashAttribute("message", "댓글 삭제 완료 ✅");
         String postParam = postId == null ? "" : "&postId=" + postId;
         return "redirect:/admin/community/comments?keyword=" + keyword + postParam;
     }

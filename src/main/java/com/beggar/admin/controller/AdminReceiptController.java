@@ -73,7 +73,7 @@ public class AdminReceiptController {
 
         // 검색 조건 및 타임리프 고정 데이터 바인딩 유지
         model.addAttribute("pageTitle", "영수증 관리");
-        model.addAttribute("pageDescription", "방별 지출 영수증을 검색하고 상세 정보를 확인해.");
+        model.addAttribute("pageDescription", "방별 지출 영수증을 검색하고 상세 정보를 확인합니다.");
         model.addAttribute("activeMenu", "receipts");
         model.addAttribute("keyword", keyword);
         model.addAttribute("roomNo", roomNo);
@@ -111,7 +111,7 @@ public class AdminReceiptController {
         }
 
         model.addAttribute("pageTitle", "영수증 상세");
-        model.addAttribute("pageDescription", "OCR, 착한가격업소 매칭, 지출 금액을 확인해.");
+        model.addAttribute("pageDescription", "OCR, 착한가격업소 매칭, 지출 금액을 확인합니다.");
         model.addAttribute("activeMenu", "receipts");
 
         return "receipts/detail";
@@ -141,7 +141,7 @@ public class AdminReceiptController {
                 .bodyToMono(Void.class)
                 .block();
 
-        redirectAttributes.addFlashAttribute("message", "영수증을 삭제했어.");
+        redirectAttributes.addFlashAttribute("message", "영수증 삭제 완료 ✅");
         return "redirect:/admin/receipts?keyword=%s%s%s%s%s".formatted(
                 keyword,
                 roomNo == null ? "" : "&roomNo=" + roomNo,

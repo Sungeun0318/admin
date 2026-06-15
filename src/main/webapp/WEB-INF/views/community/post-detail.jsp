@@ -40,13 +40,13 @@
     <article class="panel">
       <h2>관리 액션</h2>
       <p>
-        현재 게시글 status 컬럼이 없어서 삭제는 물리 삭제로 처리돼.
-        삭제하면 연결된 댓글도 함께 삭제돼.
+        현재 게시글 status 컬럼이 없어서 삭제는 물리 삭제로 처리됩니다.
+        삭제하면 연결된 댓글도 함께 삭제됩니다.
       </p>
       <form
         method="post"
         action="/admin/community/posts/${post.postId}/delete"
-        onsubmit="return confirm('게시글과 댓글을 삭제할까? 이 작업은 되돌릴 수 없어.');"
+        onsubmit="return confirm('게시글과 댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');"
       >
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
         <button class="button button-danger" type="submit">게시글 삭제</button>
@@ -60,7 +60,7 @@
     </div>
     <c:choose>
       <c:when test="${empty post.comments}">
-        <div class="mini-empty">댓글이 없어.</div>
+        <div class="mini-empty">댓글이 없습니다.</div>
       </c:when>
       <c:otherwise>
         <div class="comment-list">
@@ -73,7 +73,7 @@
                   <form
                     method="post"
                     action="/admin/community/comments/delete"
-                    onsubmit="return confirm('댓글을 삭제할까? 이 작업은 되돌릴 수 없어.');"
+                    onsubmit="return confirm('댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');"
                   >
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                     <input type="hidden" name="commentId" value="${comment.commentId}">

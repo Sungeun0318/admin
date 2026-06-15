@@ -64,7 +64,7 @@ public class AdminPostController {
 
         // 타임리프 화면 렌더링용 고정 속성값 유지
         model.addAttribute("pageTitle", "게시글 관리");
-        model.addAttribute("pageDescription", "커뮤니티 게시글을 검색하고 상세 내용을 확인해.");
+        model.addAttribute("pageDescription", "커뮤니티 게시글을 검색하고 상세 내용을 확인합니다.");
         model.addAttribute("activeMenu", "posts");
         model.addAttribute("keyword", keyword);
         model.addAttribute("tag", tag);
@@ -100,7 +100,7 @@ public class AdminPostController {
         }
 
         model.addAttribute("pageTitle", "게시글 상세");
-        model.addAttribute("pageDescription", "게시글 본문과 댓글을 확인하고 관리해.");
+        model.addAttribute("pageDescription", "게시글 본문과 댓글을 확인하고 관리합니다.");
         model.addAttribute("activeMenu", "posts");
 
         return "community/post-detail";
@@ -121,7 +121,7 @@ public class AdminPostController {
                 .bodyToMono(Void.class)
                 .block();
 
-        redirectAttributes.addFlashAttribute("message", "게시글을 삭제했어.");
+        redirectAttributes.addFlashAttribute("message", "게시글 삭제 완료 ✅");
         return "redirect:/admin/community/posts";
     }
 }
