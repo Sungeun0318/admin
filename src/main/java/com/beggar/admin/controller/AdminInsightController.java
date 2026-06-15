@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @Controller
 public class AdminInsightController {
@@ -68,20 +70,49 @@ public class AdminInsightController {
                 .block();
         Map<String, Object> data =
                 budgetRiskResponse == null ? null : (Map<String, Object>) budgetRiskResponse.get("data");
+        int currentPage = toInt(data == null ? null : data.get("page"), safePage);
+        int currentSize = toInt(data == null ? null : data.get("size"), safeSize);
+        int totalItems = toInt(data == null ? null : data.get("totalItems"), 0);
+        int totalPages = toInt(data == null ? null : data.get("totalPages"), 0);
+        List<Integer> pageNumbers = pageNumbers(currentPage, totalPages);
 
         model.addAttribute("budgetRiskModelVersion", data == null ? null : data.get("modelVersion"));
         model.addAttribute("budgetRiskSummary", data == null ? null : data.get("summary"));
         model.addAttribute("budgetRiskItems", data == null ? null : data.get("items"));
-        model.addAttribute("riskPage", data == null ? safePage : data.get("page"));
-        model.addAttribute("riskSize", data == null ? safeSize : data.get("size"));
-        model.addAttribute("riskTotalItems", data == null ? 0 : data.get("totalItems"));
-        model.addAttribute("riskTotalPages", data == null ? 0 : data.get("totalPages"));
-        model.addAttribute("riskHasPrevious", data != null && Boolean.TRUE.equals(data.get("hasPrevious")));
-        model.addAttribute("riskHasNext", data != null && Boolean.TRUE.equals(data.get("hasNext")));
+        model.addAttribute("riskPage", currentPage);
+        model.addAttribute("riskSize", currentSize);
+        model.addAttribute("riskTotalItems", totalItems);
+        model.addAttribute("riskTotalPages", totalPages);
+        model.addAttribute("riskPageNumbers", pageNumbers);
+        model.addAttribute("riskHasPrevious", currentPage > 0);
+        model.addAttribute("riskHasNext", totalPages > 0 && currentPage < totalPages - 1);
+        model.addAttribute("riskHasJumpPrevious", currentPage >= 5);
+        model.addAttribute("riskHasJumpNext", totalPages > 0 && currentPage + 5 < totalPages);
+        model.addAttribute("riskJumpPreviousPage", Math.max(currentPage - 5, 0));
+        model.addAttribute("riskJumpNextPage", Math.min(currentPage + 5, Math.max(totalPages - 1, 0)));
         model.addAttribute("pageTitle", "예산 위험도");
         model.addAttribute("pageDescription", "AI가 예측한 예산 초과 위험 분포와 고위험 방을 확인해.");
         model.addAttribute("activeMenu", "budget-risk");
 
         return "insights/budget-risk";
+    }
+
+    private int toInt(Object value, int defaultValue) {
+        if (value instanceof Number number) {
+            return number.intValue();
+        }
+        return defaultValue;
+    }
+
+    private List<Integer> pageNumbers(int currentPage, int totalPages) {
+        if (totalPages <= 0) {
+            return List.of();
+        }
+        int start = Math.max(currentPage - 2, 0);
+        int end = Math.min(start + 5, totalPages);
+        start = Math.max(end - 5, 0);
+        return IntStream.range(start, end)
+                .boxed()
+                .toList();
     }
 }
