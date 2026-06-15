@@ -23,21 +23,34 @@ public class AdminInsightController {
 
     @GetMapping("/admin/insights")
     public String spendingInsights(Model model) {
-        String uri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+        String spendingUri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
                 .path("/admin/ai/insights/spending-summary")
                 .toUriString();
 
-        Map response = webClient.get()
-                .uri(uri)
+        Map spendingResponse = webClient.get()
+                .uri(spendingUri)
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
-        Map<String, Object> data = response == null ? null : (Map<String, Object>) response.get("data");
+        Map<String, Object> data = spendingResponse == null ? null : (Map<String, Object>) spendingResponse.get("data");
+
+        String budgetRiskUri = UriComponentsBuilder.fromHttpUrl(apiServerUrl)
+                .path("/admin/ai/predictions/budget-risk")
+                .toUriString();
+        Map budgetRiskResponse = webClient.get()
+                .uri(budgetRiskUri)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+        Map<String, Object> budgetRiskData =
+                budgetRiskResponse == null ? null : (Map<String, Object>) budgetRiskResponse.get("data");
 
         model.addAttribute("summary", data == null ? null : data.get("summary"));
         model.addAttribute("topRegions", data == null ? null : data.get("topRegions"));
         model.addAttribute("tagClicks", data == null ? null : data.get("tagClicks"));
         model.addAttribute("highBudgetUsageRooms", data == null ? null : data.get("highBudgetUsageRooms"));
+        model.addAttribute("budgetRiskModelVersion", budgetRiskData == null ? null : budgetRiskData.get("modelVersion"));
+        model.addAttribute("budgetRiskItems", budgetRiskData == null ? null : budgetRiskData.get("items"));
 
         model.addAttribute("pageTitle", "소비 인사이트");
         model.addAttribute("pageDescription", "서비스 전체 소비 흐름과 추천 반응을 확인해.");
