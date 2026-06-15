@@ -66,11 +66,4 @@
     </article>
   </section>
 
-  <section class="panel">
-    <h2>상태 관리</h2>
-    <p>
-      현재 사용자 DB에는 회원 status 컬럼이 없어서 비활성화 처리는 보류 상태야.
-      다음 DB 변경 단계에서 status/deleted_at 컬럼을 추가하면 이 영역에 액션을 연결하면 돼.
-    </p>
-  </section>
 <%@ include file="../layout/footer.jsp" %>
