@@ -6,6 +6,11 @@
 <main class="admin-main">
   <%@ include file="layout/header.jsp" %>
 
+      <section class="toolbar">
+        <div></div>
+        <a class="button button-primary" href="/admin/insights">통계 보기</a>
+      </section>
+
       <section class="stats-grid" aria-label="운영 지표">
         <article class="stat-card">
           <p class="stat-label">전체 회원 수</p>
