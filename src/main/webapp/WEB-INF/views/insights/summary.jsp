@@ -133,6 +133,59 @@
           </c:otherwise>
         </c:choose>
       </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>예산 초과 위험 예측</h2>
+          <span class="admin-badge">모델 ${budgetRiskModelVersion}</span>
+        </div>
+
+        <c:choose>
+          <c:when test="${empty budgetRiskItems}">
+            <div class="mini-empty">예산 위험 예측 데이터가 없어.</div>
+          </c:when>
+          <c:otherwise>
+            <div class="table-wrap compact-table">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>방 번호</th>
+                    <th>방 이름</th>
+                    <th>위험도</th>
+                    <th>위험 점수</th>
+                    <th>예상 최종 지출</th>
+                    <th>예상 사용률</th>
+                    <th>권장 다음 소비</th>
+                    <th>사유</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <c:forEach var="risk" items="${budgetRiskItems}">
+                    <tr>
+                      <td>${risk.roomNo}</td>
+                      <td>${risk.roomName}</td>
+                      <td>
+                        <span class="status-pill ${risk.riskLevel == 'HIGH' ? 'status-danger' : 'status-active'}">
+                          ${risk.riskLevel}
+                        </span>
+                      </td>
+                      <td>${risk.riskScore}</td>
+                      <td><fmt:formatNumber value="${risk.predictedFinalSpentAmount}" pattern="#,###" />원</td>
+                      <td>${risk.predictedBudgetUsageRate}%</td>
+                      <td><fmt:formatNumber value="${risk.recommendedNextSpendLimit}" pattern="#,###" />원</td>
+                      <td class="table-content">${risk.reason}</td>
+                      <td>
+                        <a class="button button-ghost" href="/admin/rooms/${risk.roomNo}">상세</a>
+                      </td>
+                    </tr>
+                  </c:forEach>
+                </tbody>
+              </table>
+            </div>
+          </c:otherwise>
+        </c:choose>
+      </section>
     </c:otherwise>
   </c:choose>
 
