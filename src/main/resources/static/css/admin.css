@@ -486,6 +486,12 @@ a {
   color: var(--sub);
 }
 
+.button-page-active {
+  background: var(--text);
+  color: var(--white);
+  min-width: 40px;
+}
+
 .button-danger {
   background: rgba(217, 115, 76, 0.12);
   color: var(--danger);
@@ -536,6 +542,7 @@ a {
 .pagination {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
   margin-top: 18px;
