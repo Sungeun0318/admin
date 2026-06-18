@@ -209,7 +209,7 @@ def metric_card(label: str, value: Any) -> str:
     <td style="padding:8px;width:25%;">
       <div style="border:1px solid #eadfcb;border-radius:12px;padding:14px;background:#fffaf1;">
         <div style="font-size:12px;color:#8a7c67;font-weight:700;">{escape(label)}</div>
-        <div style="margin-top:8px;font-size:22px;color:#2f2922;font-weight:900;">{escape(value)}</div>
+        <div style="margin-top:8px;font-size:18px;color:#2f2922;font-weight:900;white-space:nowrap;">{escape(value)}</div>
       </div>
     </td>
     """
