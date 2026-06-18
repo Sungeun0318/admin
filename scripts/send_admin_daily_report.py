@@ -187,7 +187,7 @@ def print_collection_result(spending: dict[str, Any], budget_risk: dict[str, Any
 
 
 def format_number(value: Any, suffix: str = "") -> str:
-    if value is None or value == "":
+    if value is None or value == "" or value == "데이터 없음":
         return "데이터 없음"
     if isinstance(value, bool):
         return str(value)
