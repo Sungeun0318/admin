@@ -31,6 +31,7 @@ jobs:
           REPORT_MAIL_FROM: ${{ secrets.REPORT_MAIL_FROM }}
           REPORT_MAIL_TO: ${{ secrets.REPORT_MAIL_TO }}
           REPORT_MAIL_PASSWORD: ${{ secrets.REPORT_MAIL_PASSWORD }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           ADMIN_WEB_URL: ${{ secrets.ADMIN_WEB_URL }}

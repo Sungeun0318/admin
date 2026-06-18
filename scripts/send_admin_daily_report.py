@@ -344,6 +344,7 @@ def parse_recipients(raw_value: str) -> list[str]:
 
 def send_email(subject: str, html_body: str) -> None:
     sender = required_env("REPORT_MAIL_FROM")
+    smtp_username = os.environ.get("SMTP_USERNAME", sender).strip() or sender
     recipients = parse_recipients(required_env("REPORT_MAIL_TO"))
     password = required_env("REPORT_MAIL_PASSWORD")
     smtp_host = required_env("SMTP_HOST")
@@ -363,7 +364,7 @@ def send_email(subject: str, html_body: str) -> None:
     try:
         with smtplib.SMTP(smtp_host, smtp_port, timeout=REQUEST_TIMEOUT_SECONDS) as smtp:
             smtp.starttls()
-            smtp.login(sender, password)
+            smtp.login(smtp_username, password)
             smtp.sendmail(sender, recipients, message.as_string())
     except smtplib.SMTPException as exc:
         raise ReportError(f"메일 발송에 실패했습니다: {exc}") from exc

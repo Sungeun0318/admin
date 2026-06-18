@@ -24,6 +24,7 @@ BACKEND_ADMIN_PASSWORD=admin-password
 REPORT_MAIL_FROM=sender@example.com
 REPORT_MAIL_TO=receiver1@example.com,receiver2@example.com
 REPORT_MAIL_PASSWORD=mail-app-password
+SMTP_USERNAME=sender@example.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 
@@ -41,10 +42,13 @@ BACKEND_ADMIN_PASSWORD
 REPORT_MAIL_FROM
 REPORT_MAIL_TO
 REPORT_MAIL_PASSWORD
+SMTP_USERNAME
 SMTP_HOST
 SMTP_PORT
 ADMIN_WEB_URL
 ```
+
+`SMTP_USERNAME`은 선택값이다. 비워두면 `REPORT_MAIL_FROM`으로 SMTP 로그인한다. 메일 서비스가 발신 주소와 로그인 ID를 다르게 요구하면 `SMTP_USERNAME`에 로그인용 계정을 넣는다.
 
 ## 로컬 실행
 
@@ -87,3 +91,4 @@ Workflow 파일:
 - `/admin/auth/login`에 사용할 관리자 계정이 운영 DB에 존재하는지 확인한다.
 - GitHub Secrets 이름이 workflow의 env 이름과 정확히 일치하는지 확인한다.
 - SMTP 앱 비밀번호와 보안 설정을 확인한다.
+- `REPORT_MAIL_FROM`과 SMTP 로그인 계정이 다르면 `SMTP_USERNAME`을 별도로 등록한다.
