@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Collect admin daily report data.
-
-Stage 1 intentionally collects and prints report data only.
-Email rendering/sending is added in the next stage.
-"""
+"""Send admin daily report email."""
 
 from __future__ import annotations
 
+import html
 import os
+import smtplib
 import sys
+from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -19,6 +21,7 @@ LOGIN_PATH = "/admin/auth/login"
 SPENDING_SUMMARY_PATH = "/admin/ai/insights/spending-summary"
 BUDGET_RISK_PATH = "/admin/ai/predictions/budget-risk"
 REQUEST_TIMEOUT_SECONDS = 20
+KST = ZoneInfo("Asia/Seoul")
 
 
 class ReportError(RuntimeError):
@@ -45,6 +48,21 @@ def required_env(name: str) -> str:
     if value is None or value.strip() == "":
         raise ReportError(f"필수 환경변수가 없습니다: {name}")
     return value.strip()
+
+
+def require_report_env() -> None:
+    for name in (
+        "BACKEND_BASE_URL",
+        "BACKEND_ADMIN_USERNAME",
+        "BACKEND_ADMIN_PASSWORD",
+        "REPORT_MAIL_FROM",
+        "REPORT_MAIL_TO",
+        "REPORT_MAIL_PASSWORD",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "ADMIN_WEB_URL",
+    ):
+        required_env(name)
 
 
 def backend_url(path: str) -> str:
@@ -168,13 +186,202 @@ def print_collection_result(spending: dict[str, Any], budget_risk: dict[str, Any
         print(f"- {safe_get(item, 'tag')}: {safe_get(item, 'clickCount')}")
 
 
+def format_number(value: Any, suffix: str = "") -> str:
+    if value is None or value == "":
+        return "데이터 없음"
+    if isinstance(value, bool):
+        return str(value)
+    if isinstance(value, (int, float)):
+        if isinstance(value, float) and not value.is_integer():
+            return f"{value:,.1f}{suffix}"
+        return f"{int(value):,}{suffix}"
+    return f"{value}{suffix}"
+
+
+def escape(value: Any) -> str:
+    if value is None or value == "":
+        return "데이터 없음"
+    return html.escape(str(value))
+
+
+def metric_card(label: str, value: Any) -> str:
+    return f"""
+    <td style="padding:8px;width:25%;">
+      <div style="border:1px solid #eadfcb;border-radius:12px;padding:14px;background:#fffaf1;">
+        <div style="font-size:12px;color:#8a7c67;font-weight:700;">{escape(label)}</div>
+        <div style="margin-top:8px;font-size:22px;color:#2f2922;font-weight:900;">{escape(value)}</div>
+      </div>
+    </td>
+    """
+
+
+def render_risk_rows(items: list[Any]) -> str:
+    if not items:
+        return "<tr><td colspan=\"4\" style=\"padding:14px;text-align:center;color:#8a7c67;\">데이터 없음</td></tr>"
+
+    rows = []
+    for index, item in enumerate(items[:5], start=1):
+        if not isinstance(item, dict):
+            continue
+        rows.append(
+            f"""
+            <tr>
+              <td style="padding:10px;border-bottom:1px solid #eee3d1;">{index}</td>
+              <td style="padding:10px;border-bottom:1px solid #eee3d1;font-weight:800;">{escape(safe_get(item, "roomName"))}</td>
+              <td style="padding:10px;border-bottom:1px solid #eee3d1;">{escape(format_number(safe_get(item, "riskScore")))}</td>
+              <td style="padding:10px;border-bottom:1px solid #eee3d1;">{escape(format_number(safe_get(item, "predictedBudgetUsageRate"), "%"))}</td>
+            </tr>
+            """
+        )
+    return "\n".join(rows) if rows else "<tr><td colspan=\"4\" style=\"padding:14px;text-align:center;color:#8a7c67;\">데이터 없음</td></tr>"
+
+
+def render_simple_list(items: list[Any], label_key: str, value_key: str, suffix: str = "") -> str:
+    if not items:
+        return "<li>데이터 없음</li>"
+    rows = []
+    for item in items[:5]:
+        if not isinstance(item, dict):
+            continue
+        rows.append(
+            f"<li><strong>{escape(safe_get(item, label_key))}</strong>: "
+            f"{escape(format_number(safe_get(item, value_key), suffix))}</li>"
+        )
+    return "\n".join(rows) if rows else "<li>데이터 없음</li>"
+
+
+def build_email_subject(now: datetime) -> str:
+    return f"[거지 우정 수호대] 일일 운영 리포트 - {now:%Y.%m.%d}"
+
+
+def build_report_html(spending: dict[str, Any], budget_risk: dict[str, Any], now: datetime) -> str:
+    spending_summary = safe_get(spending, "summary", {})
+    risk_summary = safe_get(budget_risk, "summary", {})
+    risk_items = budget_risk.get("items") if isinstance(budget_risk.get("items"), list) else []
+    top_regions = spending.get("topRegions") if isinstance(spending.get("topRegions"), list) else []
+    tag_clicks = spending.get("tagClicks") if isinstance(spending.get("tagClicks"), list) else []
+    admin_web_url = required_env("ADMIN_WEB_URL")
+
+    total_rooms = format_number(safe_get(risk_summary, "totalRoomCount"), "개")
+    total_spent = format_number(safe_get(spending_summary, "totalSpentAmount"), "원")
+    average_receipt = format_number(safe_get(spending_summary, "averageReceiptAmount"), "원")
+    average_risk_score = format_number(safe_get(risk_summary, "averageRiskScore"))
+
+    return f"""<!doctype html>
+<html lang="ko">
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#2f2922;">
+  <div style="max-width:760px;margin:0 auto;padding:28px 18px;">
+    <div style="background:#ffffff;border-radius:18px;padding:28px;border:1px solid #eadfcb;">
+      <div style="font-size:13px;color:#a18f75;font-weight:800;">{now:%Y.%m.%d} 운영 리포트</div>
+      <h1 style="margin:8px 0 6px;font-size:28px;line-height:1.25;color:#2f2922;">거지 우정 수호대 일일 운영 리포트</h1>
+      <p style="margin:0 0 22px;color:#6f6252;font-size:14px;">관리자 주요 운영 지표를 자동 수집한 결과입니다.</p>
+
+      <h2 style="font-size:18px;margin:22px 0 10px;">1. 운영 요약</h2>
+      <table role="presentation" style="width:100%;border-collapse:collapse;"><tr>
+        {metric_card("전체 방 수", total_rooms)}
+        {metric_card("총 지출액", total_spent)}
+        {metric_card("평균 영수증", average_receipt)}
+        {metric_card("평균 위험 점수", average_risk_score)}
+      </tr></table>
+
+      <h2 style="font-size:18px;margin:26px 0 10px;">2. 예산 위험도</h2>
+      <table role="presentation" style="width:100%;border-collapse:collapse;"><tr>
+        {metric_card("고위험 방", format_number(safe_get(risk_summary, "highCount"), "개"))}
+        {metric_card("중위험 방", format_number(safe_get(risk_summary, "mediumCount"), "개"))}
+        {metric_card("저위험 방", format_number(safe_get(risk_summary, "lowCount"), "개"))}
+        {metric_card("고위험 비율", format_number(safe_get(risk_summary, "highRate"), "%"))}
+      </tr></table>
+
+      <h2 style="font-size:18px;margin:26px 0 10px;">3. 고위험 방 TOP 5</h2>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #eadfcb;border-radius:12px;overflow:hidden;">
+        <thead>
+          <tr style="background:#fff2d1;text-align:left;">
+            <th style="padding:10px;">순위</th>
+            <th style="padding:10px;">방 이름</th>
+            <th style="padding:10px;">위험 점수</th>
+            <th style="padding:10px;">예상 사용률</th>
+          </tr>
+        </thead>
+        <tbody>{render_risk_rows(risk_items)}</tbody>
+      </table>
+
+      <h2 style="font-size:18px;margin:26px 0 10px;">4. 소비 인사이트</h2>
+      <ul style="line-height:1.8;margin:0;padding-left:20px;">
+        <li>예산 초과 방 비율: <strong>{escape(format_number(safe_get(spending_summary, "budgetOverRoomRate"), "%"))}</strong></li>
+        <li>착한가격업소 이용률: <strong>{escape(format_number(safe_get(spending_summary, "goodPriceUsageRate"), "%"))}</strong></li>
+      </ul>
+
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin-top:12px;"><tr>
+        <td style="width:50%;vertical-align:top;padding-right:10px;">
+          <div style="border:1px solid #eadfcb;border-radius:12px;padding:14px;">
+            <h3 style="font-size:15px;margin:0 0 8px;">지역별 소비 TOP</h3>
+            <ul style="line-height:1.8;margin:0;padding-left:18px;">{render_simple_list(top_regions, "region", "spentAmount", "원")}</ul>
+          </div>
+        </td>
+        <td style="width:50%;vertical-align:top;padding-left:10px;">
+          <div style="border:1px solid #eadfcb;border-radius:12px;padding:14px;">
+            <h3 style="font-size:15px;margin:0 0 8px;">태그별 추천 클릭</h3>
+            <ul style="line-height:1.8;margin:0;padding-left:18px;">{render_simple_list(tag_clicks, "tag", "clickCount", "회")}</ul>
+          </div>
+        </td>
+      </tr></table>
+
+      <div style="margin-top:26px;padding:16px;border-radius:12px;background:#2f2922;text-align:center;">
+        <a href="{html.escape(admin_web_url)}" style="color:#ffffff;text-decoration:none;font-weight:900;">관리자 페이지에서 자세히 보기</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>"""
+
+
+def parse_recipients(raw_value: str) -> list[str]:
+    recipients = [item.strip() for item in raw_value.split(",") if item.strip()]
+    if not recipients:
+        raise ReportError("REPORT_MAIL_TO에 유효한 수신자 이메일이 없습니다.")
+    return recipients
+
+
+def send_email(subject: str, html_body: str) -> None:
+    sender = required_env("REPORT_MAIL_FROM")
+    recipients = parse_recipients(required_env("REPORT_MAIL_TO"))
+    password = required_env("REPORT_MAIL_PASSWORD")
+    smtp_host = required_env("SMTP_HOST")
+    smtp_port_raw = required_env("SMTP_PORT")
+    try:
+        smtp_port = int(smtp_port_raw)
+    except ValueError as exc:
+        raise ReportError("SMTP_PORT는 숫자여야 합니다.") from exc
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = subject
+    message["From"] = sender
+    message["To"] = ", ".join(recipients)
+    message.attach(MIMEText("HTML 메일을 지원하는 클라이언트에서 확인해주세요.", "plain", "utf-8"))
+    message.attach(MIMEText(html_body, "html", "utf-8"))
+
+    try:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=REQUEST_TIMEOUT_SECONDS) as smtp:
+            smtp.starttls()
+            smtp.login(sender, password)
+            smtp.sendmail(sender, recipients, message.as_string())
+    except smtplib.SMTPException as exc:
+        raise ReportError(f"메일 발송에 실패했습니다: {exc}") from exc
+
+
 def main() -> int:
     load_local_env()
     try:
+        require_report_env()
         token = login_admin()
         spending = collect_spending_summary(token)
         budget_risk = collect_budget_risk(token)
         print_collection_result(spending, budget_risk)
+        now = datetime.now(KST)
+        subject = build_email_subject(now)
+        html_body = build_report_html(spending, budget_risk, now)
+        send_email(subject, html_body)
+        print(f"\n메일 발송 성공: {subject}")
         return 0
     except requests.RequestException as exc:
         print(f"API 호출 중 네트워크 오류가 발생했습니다: {exc}", file=sys.stderr)
